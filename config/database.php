@@ -87,38 +87,37 @@ return [
 
         'mongodb' => array(
             'driver' => 'mongodb',
-            'host' => env('DB_HOST','dds-2ze2462d8b06cc942.mongodb.rds.aliyuncs.com'),
+            'host' => env('DB_HOST','dds-2ze432a36fdd84341.mongodb.rds.aliyuncs.com:3717'),
             'port' => env('DB_PORT','3717'),
-            'database' => env('DB_DATABASE','cookingwebadmin'),
-            'username' => env('DB_USERNAME','dbnamecookingwebadmin'),
-            'password' => env('DB_PASSWORD','dbnamecookingwebadmin'),
+            'database' => env('DB_DATABASE','oneRollWeibo'),
+            'username' => env('DB_USERNAME','oneRollWeibo'),
+            'password' => env('DB_PASSWORD','oneRollWeibo'),
             'options' => array(
-                'db' => env('DB_DATABASE','cookingwebadmin')
+                'db' => env('DB_DATABASE','oneRollWeibo')
             )
             
         ), // sets the authentication database required by mongo 3
 
         'mongodb_game' => array(
             'driver' => 'mongodb',
-            'host' => env('DB_GAME_HOST','dds-2ze2462d8b06cc942.mongodb.rds.aliyuncs.com'),
+            'host' => env('DB_GAME_HOST','dds-2ze432a36fdd84341.mongodb.rds.aliyuncs.com:3717'),
             'port' => env('DB_GAME_PORT','3717'),
-            'database' => env('DB_GAME_DATABASE','cooking_db'),
-            'username' => env('DB_GAME_USERNAME','lookup'),
-            'password' => env('DB_GAME_PASSWORD','lookup'),
+            'database' => env('DB_GAME_DATABASE','oneRollWeibo'),
+            'username' => env('DB_GAME_USERNAME','oneRollWeibo'),
+            'password' => env('DB_GAME_PASSWORD','oneRollWeibo'),
             'options' => array(
-                'db' => env('DB_GAME_DATABASE','cooking_db')
+                'db' => env('DB_GAME_DATABASE','oneRollWeibo')
             )
-
         ),
         'mongodb_log' => array(
             'driver' => 'mongodb',
-            'host' => env('DB_GAME_LOG_HOST','dds-2ze2462d8b06cc942.mongodb.rds.aliyuncs.com'),
+            'host' => env('DB_GAME_LOG_HOST','dds-2ze432a36fdd84341.mongodb.rds.aliyuncs.com:3717'),
             'port' => env('DB_GAME_LOG_PORT','3717'),
-            'database' => env('DB_GAME_LOG_DATABASE','logsystem'),
-            'username' => env('DB_GAME_LOG_USERNAME','lookup'),
-            'password' => env('DB_GAME_LOG_PASSWORD','lookup'),
+            'database' => env('DB_GAME_LOG_DATABASE','oneRollWeibo'),
+            'username' => env('DB_GAME_LOG_USERNAME','oneRollWeibo'),
+            'password' => env('DB_GAME_LOG_PASSWORD','oneRollWeibo'),
             'options' => array(
-                'db' => env('DB_GAME_LOG_DATABASE','logsystem')
+                'db' => env('DB_GAME_LOG_DATABASE','oneRollWeibo')
             )
         )
 
