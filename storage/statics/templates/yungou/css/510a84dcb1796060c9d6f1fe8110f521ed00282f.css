@@ -1,0 +1,262 @@
+.g-body {
+    padding-bottom: 80px;
+}
+
+/*微信支付*/
+.m-weixin-title {
+    text-align: left;
+    font-size: 20px;
+    padding: 20px;
+    border-top: 3px solid #C10725;
+}
+
+/*微信支付框*/
+.m-weixin-main {
+    position: relative;
+    font-size: 18px;
+    text-align: center;
+    width: 1200px;
+    padding-bottom: 100px;
+    border: 1px solid #e8e8e8;
+}
+.m-weixin-main p {
+    padding-right: 200px;
+}
+.m-weixin-header {
+    margin-bottom: 20px;
+}
+
+.m-header {
+    height: 125px
+}
+
+.m-header-logo {
+    margin-top: 30px
+}
+
+.m-header-steps {
+    float: right;
+    margin-top: 34px
+}
+
+.m-cashier {
+    font-size: 14px;
+    color: #333;
+}
+
+.m-cashier .txtMoney {
+    font-size: 20px;
+    color: #DA3553;
+    font-weight: bold;
+    font-family: "Microsoft Yahei",simhei,serif;
+    vertical-align: middle
+}
+
+.m-cashier .w-pay-selector {
+    float: left;
+    margin-bottom: 25px
+}
+
+.m-cashier-info {
+    border: #ddd 1px solid;
+    padding: 30px 40px
+}
+
+.m-cashier-info .header {
+    height: 95px;
+    color: #343434
+}
+
+.m-cashier-info .header .title {
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Microsoft Yahei",simhei,serif;
+    line-height: 32px;
+    padding-top: 7px;
+}
+
+.m-cashier-info .header .desc {
+    font-size: 14px;
+    line-height: 32px;
+    padding-top: 8px;
+    color: #808080;
+}
+
+.m-cashier-info .detail {
+    position: relative;
+    padding: 20px 0;
+    border-top: #DDDDDD 1px solid
+}
+
+.m-cashier-info .detail th {
+    white-space: nowrap;
+    vertical-align: top
+}
+
+.m-cashier-info .detail th,.m-cashier-info .detail td {
+    line-height: 2
+}
+
+.m-cashier-info .detail .go {
+    float: right;
+}
+
+.m-cashier-amount {
+    font-size: 16px;
+    margin-top: 20px;
+    border: 1px solid #ddd
+}
+
+.m-cashier-amount .amount {
+    margin-bottom: 20px;
+}
+
+.m-cashier-amount .useCoin {
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.m-cashier-amount .useCoin:empty {
+    display: none
+}
+
+.m-cashier-amount .useCoinReduce em {
+    color: #DD344F;
+}
+
+.m-cashier-amount .payment {
+    margin-top: 20px;
+}
+
+.m-cashier-amount .payment .title {
+    float: left;
+    margin-top: 15px;
+}
+
+.m-cashier-amount .header {
+    padding: 30px 40px;
+}
+
+.m-cashier-amount .content {
+    padding: 0 40px 30px;
+}
+
+.m-cashier-usePayments .opt {
+    padding-left: 5em;
+}
+
+.m-cashier-usePayments .content {
+    padding-top: 30px;
+    background: #F5F5F5;
+}
+
+.m-cashier-msgboxTips {
+    color: #7C7C7C;
+    width: 360px;
+    padding-left: 45px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.m-cashier-msgboxTips .title {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+}
+
+.m-cashier-msgboxTips .tips {
+    font-size: 12px;
+    margin: 0 0 20px;
+}
+
+.m-cashier-msgboxTips .buttons .w-button {
+    margin-right: 10px;
+}
+
+.m-cashier-msgboxTips .buttons a {
+    font-size: 12px;
+}
+
+.m-cashier-msgboxTips .ico {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.m-cashier-agreement {
+    height: 400px;
+    border: 1px solid #e0e0e0;
+    margin-top: 20px
+}
+
+.m-cashier-agreement iframe {
+    width: 100%;
+    height: 100%;
+    border: none
+}
+
+.m-cashier-recharge {
+    margin: 50px 80px
+}
+
+.m-cashier-recharge td,.m-cashier-recharge th {
+    padding: 15px 0
+}
+
+.m-cashier-recharge th {
+    white-space: nowrap
+}
+
+.m-cashier-recharge .title {
+    line-height: 40px;
+    font-size: 16px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #888
+}
+
+.m-cashier-recharge .w-button {
+    margin-right: 10px;
+}
+
+.m-cashier-recharge .content {
+    padding: 20px 0
+}
+
+.m-cashier-recharge .w-pay-selector,.m-cashier-recharge .w-pay-type,.m-cashier-recharge .w-pay-money {
+    margin-bottom: 0
+}
+
+.m-cashier-result-wrapper {
+    width: 100%
+}
+
+.m-cashier-result-wrapper td {
+    padding: 80px 0;
+    text-align: center
+}
+
+.m-cashier-result {
+    display: inline-block;
+    overflow: hidden;
+    zoom: 1;
+    text-align: left;
+    margin: auto
+}
+
+.m-cashier-result .ico {
+    float: left;
+    margin-right: 10px
+}
+
+.m-cashier-result .cont {
+    float: left;
+}
+
+.m-cashier-result .title {
+    font-size: 20px;
+    line-height: 48px
+}
+
+#idCountDown {
+    color: #db3652
+}
