@@ -7,4 +7,8 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'hellaEngine\\RPCMessage\\' => array($vendorDir . '/hella-engine/rpc-message/src/hellaEngine/RPCMessage'),
+    'hellaEngine\\' => array($vendorDir . '/hella-engine/support/src/hellaEngine'),
+    'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
+    'Stringy\\' => array($vendorDir . '/danielstjules/stringy/src'),
+    '' => array($baseDir . '/'),
 );

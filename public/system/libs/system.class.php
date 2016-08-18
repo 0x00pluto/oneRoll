@@ -1,187 +1,228 @@
-<?php 
+<?php
 
-final class System { 
+final class System
+{
 
-	public static function &load_sys_class($class_name='',$module='sys',$new='yes'){ 
+    public static function &load_sys_class($class_name = '', $module = 'sys', $new = 'yes')
+    {
 
-		static $classes = array(); 
+        static $classes = array();
 
-		$path=self::load_class_file_name($class_name,$module); 
+        $path = self::load_class_file_name($class_name, $module);
 
-		$key=md5($class_name.$path.$new); 
+        $key = md5($class_name . $path . $new);
 
-		if (isset($classes[$key])) { return $classes[$key]; } 
+        if (isset($classes[$key])) {
+            return $classes[$key];
+        }
 
-		if(file_exists($path)){ 
+        if (file_exists($path)) {
 
-			include_once $path; 
+            include_once $path;
 
-			if($new=='yes'){ 
+            if ($new == 'yes') {
 
-				$classes[$key] = new $class_name; 
+                $classes[$key] = new $class_name;
 
-			}else{ $classes[$key]=true; } return $classes[$key]; 
+            } else {
+                $classes[$key] = true;
+            }
+            return $classes[$key];
 
-		}else{ _error('load system class file','The file does not exist'); } 
+        } else {
+            _error('load system class file', 'The file does not exist:');
+        }
 
-} 
+    }
 
-public static function &load_app_class($class_name='',$module='',$new='yes'){ 
+    public static function &load_app_class($class_name = '', $module = '', $new = 'yes')
+    {
 
-	if(empty($module)){ $module=ROUTE_M; } 
+        if (empty($module)) {
+            $module = ROUTE_M;
+        }
 
-	return self::load_sys_class($class_name,$module,$new); 
+        return self::load_sys_class($class_name, $module, $new);
 
-} 
+    }
 
-public static function load_class_file_name($class_name='',$module='sys'){ 
+    public static function load_class_file_name($class_name = '', $module = 'sys')
+    {
 
-	static $filename = array(); 
+        static $filename = array();
 
-	if(isset($filename[$module.$class_name])) return $filename[$module.$class_name]; 
+        if (isset($filename[$module . $class_name])) return $filename[$module . $class_name];
 
-	if($module=='sys'){ $filename[$module.$class_name]=G_SYSTEM.'libs'.DIRECTORY_SEPARATOR.$class_name.'.class.php'; }
+        if ($module == 'sys') {
+            $filename[$module . $class_name] = G_SYSTEM . 'libs' . DIRECTORY_SEPARATOR . $class_name . '.class.php';
+        } else if ($module != 'sys') {
+            $filename[$module . $class_name] = G_SYSTEM . 'modules' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . "lib" . DIRECTORY_SEPARATOR . $class_name . '.class.php';
 
-	else if($module!='sys')
+        } else {
+            return $filename[$module . $class_name];
+        }
 
-	{ $filename[$module.$class_name]=G_SYSTEM.'modules'.DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR."lib".DIRECTORY_SEPARATOR.$class_name.'.class.php'; 
+        return $filename[$module . $class_name];
 
-	}else{ return $filename[$module.$class_name]; } 
+    }
 
-	return $filename[$module.$class_name]; 
+    public static function load_sys_config($filename, $keys = '')
+    {
 
-} 
+        static $configs = array();
 
-public static function load_sys_config($filename,$keys=''){ 
+        if (isset($configs[$filename])) {
 
-	static $configs = array(); 
+            if (empty($keys)) {
+                return $configs[$filename];
 
-	if(isset($configs[$filename]))
+            } else if (isset($configs[$filename][$keys])) {
+                return $configs[$filename][$keys];
+            } else {
+                return $configs[$filename];
+            }
 
-		{ 
+        }
 
-		if (empty($keys)) { return $configs[$filename]; 
+        if (file_exists(G_CONFIG . $filename . '.inc.php')) {
 
-		} 
+            $configs[$filename] = include G_CONFIG . $filename . '.inc.php';
 
-		else if (isset($configs[$filename][$keys])) { return $configs[$filename][$keys]; }
+            if (empty($keys)) {
+                return $configs[$filename];
+            } else {
+                return $configs[$filename][$keys];
+            }
 
-		else{ return $configs[$filename]; } 
+        }
 
-	}
+        _error('load system config file', 'The file does not exist');
 
-	if (file_exists(G_CONFIG.$filename.'.inc.php')){
+    }
 
-		$configs[$filename]=include G_CONFIG.$filename.'.inc.php';
+    public static function load_app_config($filename, $keys = '', $module = '')
+    {
+        static $configs = array();
 
-		if(empty($keys)){ return $configs[$filename]; }
+        if (isset($configs[$filename])) {
 
-		else{ return $configs[$filename][$keys]; }
+            if (empty($keys)) {
+                return $configs[$filename];
+            } else if (isset($configs[$filename][$keys])) {
+                return $configs[$filename][$keys];
+            } else {
+                return $configs[$filename];
+            }
 
-	} 
+        }
 
-	_error('load system config file','The file does not exist'); 
+        if (empty($module)) $module = ROUTE_M;
+        $path = G_SYSTEM . 'modules' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $filename . '.ini.php';
+        if (file_exists($path)) {
 
-} 
+            $configs[$filename] = include $path;
 
-public static function load_app_config($filename,$keys='',$module=''){ 
-	static $configs = array(); 
+            if (empty($keys)) {
+                return $configs[$filename];
+            } else {
+                return $configs[$filename][$keys];
+            }
 
-	if(isset($configs[$filename])){ 
+        }
 
-		if (empty($keys)) { return $configs[$filename]; } 
+        _error('load app config file', 'The file does not exist');
 
-		else if (isset($configs[$filename][$keys])) { return $configs[$filename][$keys]; }
+    }
 
-		else{ return $configs[$filename]; } 
+    public static function load_sys_fun($fun_name)
+    {
 
-	} 
+        static $funcs = array();
 
-	if(empty($module)) $module=ROUTE_M; $path=G_SYSTEM.'modules'.DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$filename.'.ini.php';
-	if (file_exists($path)){ 
+        $path = G_SYSTEM . 'funcs' . DIRECTORY_SEPARATOR . $fun_name . '.fun.php';
 
-		$configs[$filename]=include $path; 
+        $key = md5($path);
 
-		if(empty($keys)){ return $configs[$filename]; }
+        if (isset($funcs[$key])) return true;
 
-		else{ return $configs[$filename][$keys]; } 
+        if (file_exists($path)) {
 
-	} 
+            $funcs[$key] = true;
+            return include $path;
 
-	_error('load app config file','The file does not exist'); 
+        } else {
 
-} 
+            $funcs[$key] = false;
 
-public static function load_sys_fun($fun_name){ 
+            _error('load system function file', 'The file does not exist');
 
-	static $funcs = array(); 
+        }
 
-	$path=G_SYSTEM.'funcs'.DIRECTORY_SEPARATOR.$fun_name.'.fun.php';
+    }
 
-	$key = md5($path); 
+    public static function load_app_fun($fun_name, $module = null)
+    {
 
-	if (isset($funcs[$key])) return true; 
+        static $funcs = array();
 
-	if (file_exists($path)){ 
+        if (empty($module)) {
+            $module = ROUTE_M;
+        }
+        $path = G_SYSTEM . 'modules' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $fun_name . '.fun.php';
 
-		$funcs[$key] = true; return include $path; 
+        $key = md5($path);
 
-		}
+        if (isset($funcs[$key])) return true;
 
-	else{ 
+        if (file_exists($path)) {
+            $funcs[$key] = true;
+            return include $path;
+        } else {
+            _error('load app function file', 'The file does not exist');
+        }
 
-	$funcs[$key] = false; 
+    }
 
-	_error('load system function file','The file does not exist'); 
+    public static function &load_app_model($model_name = '', $module = '', $new = 'yes')
+    {
 
-	} 
+        static $models = array();
 
-} 
+        if (empty($module)) {
+            $module = ROUTE_M;
+        }
+        $key = md5($module . $model_name . $new);
 
-public static function load_app_fun($fun_name,$module=null){ 
+        if (isset($models[$key])) {
+            return $models[$key];
+        }
+        $path = G_SYSTEM . 'modules' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . $model_name . '.model.php';
 
-	static $funcs = array(); 
+        if (file_exists($path)) {
 
-	if(empty($module)){ $module=ROUTE_M; } $path=G_SYSTEM.'modules'.DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$fun_name.'.fun.php'; 
+            include $path;
 
-	$key = md5($path); 
+            if ($new == 'yes') {
 
-	if (isset($funcs[$key])) return true; 
+                $models[$key] = new $model_name;
 
-	if (file_exists($path)){ $funcs[$key] = true; return include $path; }
+            } else if ($new == 'no') {
 
-	else{ _error('load app function file','The file does not exist'); } 
+                $models[$key] = true;
 
-} 
+            }
+            return $models[$key];
 
-public static function &load_app_model($model_name='',$module='',$new='yes'){ 
+        }
 
-	static $models=array(); 
+        _error('load app model file', 'The file does not exist');
 
-	if(empty($module)){ $module=ROUTE_M; } $key=md5($module.$model_name.$new); 
+    }
 
-	if(isset($models[$key])){ return $models[$key]; } $path=G_SYSTEM.'modules'.DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.$model_name.'.model.php'; 
-
-	if (file_exists($path)){ 
-
-		include $path; 
-
-		if($new=='yes'){ 
-
-			$models[$key]=new $model_name; 
-
-		}else if($new=='no'){ 
-
-			$models[$key]=true; 
-
-		} return $models[$key]; 
-
-    } 
-
-    _error('load app model file','The file does not exist'); 
-
-} 
-
-public static function CreateApp(){ return self::load_sys_class('application'); } }
+    public static function CreateApp()
+    {
+        return self::load_sys_class('application');
+    }
+}
 
 ?>

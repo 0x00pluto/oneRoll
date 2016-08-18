@@ -1,7 +1,7 @@
 <?php 
 
 return array (
-  'm.goleme.cc' => 
+  'onerollweibo.tomatofuns.com' =>
   array (
     'm' => 'mobile',
     'c' => 'mobile',

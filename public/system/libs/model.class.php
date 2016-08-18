@@ -55,14 +55,17 @@ class model
 //		return $this->db->get_fetch_type($type,$key);
 //
 //	}
-    final public function GetList($sql, $info = array('type' => 1, 'key' => ''))
+    public function GetList($sql, $info = array('type' => 1, 'key' => ''))
     {
         return false;
     }
 
     //获取单条数据
-    final public function GetOne($sql, $info = array('type' => 1))
+    public function GetOne($sql, $info = array('type' => 1))
     {
+//        var_dump(debug_backtrace()
+        var_dump($sql);
+        return false;
         if (empty($sql)) return false;
         if (!is_array($info)) return false;
         $type = isset($info['type']) ? $info['type'] : 1;

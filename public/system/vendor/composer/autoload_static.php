@@ -6,10 +6,22 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit70209ec5b7a9d3b2d47233c988ed3d78
 {
+    public static $files = array (
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '65fec9ebcfbb3cbb4fd0d519687aea01' => __DIR__ . '/..' . '/danielstjules/stringy/src/Create.php',
+        'cf7018d0b4038dd36a40413dee316802' => __DIR__ . '/..' . '/hella-engine/support/src/hellaEngine/support/Helper.php',
+    );
+
     public static $prefixLengthsPsr4 = array (
         'h' => 
         array (
             'hellaEngine\\RPCMessage\\' => 23,
+            'hellaEngine\\' => 12,
+        ),
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Stringy\\' => 8,
         ),
     );
 
@@ -18,6 +30,22 @@ class ComposerStaticInit70209ec5b7a9d3b2d47233c988ed3d78
         array (
             0 => __DIR__ . '/..' . '/hella-engine/rpc-message/src/hellaEngine/RPCMessage',
         ),
+        'hellaEngine\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hella-engine/support/src/hellaEngine',
+        ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Stringy\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/danielstjules/stringy/src',
+        ),
+    );
+
+    public static $fallbackDirsPsr4 = array (
+        0 => __DIR__ . '/../..' . '/',
     );
 
     public static $prefixesPsr0 = array (
@@ -35,6 +63,7 @@ class ComposerStaticInit70209ec5b7a9d3b2d47233c988ed3d78
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit70209ec5b7a9d3b2d47233c988ed3d78::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit70209ec5b7a9d3b2d47233c988ed3d78::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit70209ec5b7a9d3b2d47233c988ed3d78::$fallbackDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit70209ec5b7a9d3b2d47233c988ed3d78::$prefixesPsr0;
 
         }, null, ClassLoader::class);

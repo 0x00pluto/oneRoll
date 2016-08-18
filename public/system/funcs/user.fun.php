@@ -29,7 +29,7 @@ function get_user_name($uid='',$type='username',$key='sub'){
 			return '';
 	}else{		
 		$db = System::load_sys_class("model");
-		$uid = intval($uid);
+//		$uid = intval($uid);
 		$info = $db->GetOne("select username,email,mobile from `@#_member` where `uid` = '$uid' limit 1");	
 		if(isset($info['username']) && !empty($info['username'])){	
 			return $info['username'];

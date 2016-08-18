@@ -14,7 +14,7 @@ class base extends SystemAction {
 
 	public function __construct(){
 
-		$this->db = System::load_sys_class("model");
+		$this->db = System::load_sys_class("rpcmodel");
 
 		$uid=intval(_encrypt(_getcookie("uid"),'DECODE'));		
 

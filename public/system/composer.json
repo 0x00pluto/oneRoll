@@ -1,6 +1,12 @@
 {
+  "autoload": {
+    "psr-4": {
+      "": ""
+    }
+  },
   "require": {
     "hella-engine/rpc-message": "^1.0.0",
-    "brandonwamboldt/utilphp": "^1.1"
+    "brandonwamboldt/utilphp": "^1.1",
+    "hella-engine/support": "^1.0.0"
   }
 }

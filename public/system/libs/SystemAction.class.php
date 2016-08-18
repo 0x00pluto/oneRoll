@@ -7,7 +7,7 @@
  class SystemAction {
 	static  private $route_url;
 	
-	final protected function DB($model='model',$module='sys'){
+	final protected function DB($model='rpcmodel',$module='sys'){
 		static $classes = array();
 		if(isset($classes[$model.$module]))return $classes[$model.$module];
 		if($module=='sys'){

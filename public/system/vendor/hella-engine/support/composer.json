@@ -1,0 +1,34 @@
+{
+  "name": "hella-engine/support",
+  "type": "library",
+  "keywords": [
+    "php",
+    "php-support",
+    "php-util"
+  ],
+  "description": "HellaEngine support php code .",
+  "require": {
+    "php": ">=5.0.0",
+    "danielstjules/stringy": "*",
+    "brandonwamboldt/utilphp": "^1.1"
+  },
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "hellaEngine\\": "src/hellaEngine/"
+    },
+    "files": [
+      "src/hellaEngine/support/Helper.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "peng.zhi",
+      "email": "babety@163.com",
+      "role": "Developer"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^5.0"
+  }
+}

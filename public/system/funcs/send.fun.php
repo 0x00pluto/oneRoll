@@ -78,7 +78,7 @@ function send_wx_shop_code($openid=null,$uid=null,$gid=null){
 	$data = array(
 		"touser" => $openid,
 		"template_id"=>$template_id['cfg_value'],
-		"url"=>"http://m.goleme.cc/index.php/mobile/mobile/item/".$info['id'], 
+		"url"=>"http://onerollweibo.tomatofuns.com/index.php/mobile/mobile/item/".$info['id'],
 		"data" =>array(
 			'first' =>array(
 				"value"=>"恭喜您！您购买的云购码".$info['q_user_code']."已经中奖",

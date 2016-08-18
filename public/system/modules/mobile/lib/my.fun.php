@@ -71,10 +71,10 @@ function yunjl($id,$n=1){
 	return $shop['thumb'];
 }
 function microt($time,$x=null){
-	$len=strlen($time);
-	if($len<13){
-		$time=$time."0";
-	}
+//	$len=strlen($time);
+//	if($len<13){
+//		$time=$time."0";
+//	}
 	$list=explode(".",$time);	
 	if($x=="L"){		
 		return date("His",$list[0]).substr($list[1],0,3);
