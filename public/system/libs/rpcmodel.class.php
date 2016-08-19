@@ -69,6 +69,9 @@ class rpcmodel extends model
         $this->addGetAdapter("select `cateid`,`name`,`pic_url` from `@#_category` where `model`='1' and `parentid` = '0' order by `order` desc",
             "rpc_a_get_category",
             \arrayAdapter\categoryAdapter::class);
+        $this->addGetAdapter("select * from `@#_category` where `model`='1' order by `order` desc",
+            "rpc_a_get_category",
+            \arrayAdapter\categoryAdapter::class);
 
         $this->addGetAdapter("select * from `@#_article` where cateid = 142 order by posttime DESC limit 4",
             "rpc_a_get_article",

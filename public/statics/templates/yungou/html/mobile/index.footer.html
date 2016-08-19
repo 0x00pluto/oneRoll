@@ -33,7 +33,7 @@
     padding: 0;
     width: 40px;
     height: 40px;
-    border-top: 1px solid #4b4b4b;
+    border-top: 0px solid #4b4b4b;
 }
 
 #btnGotoTop1 {
@@ -60,9 +60,9 @@
 }
 
 #top_div {
-    display: none;
+    display: block;
     width: 40px;
-    height: 80px;
+    height: 40px;
     background: #242424;
     opacity: 0.8;
     border-bottom-left-radius: 5px;
@@ -187,7 +187,7 @@
 <div class="footerdi" style="bottom: 0px;">
     <ul>
         <li class="f_home">
-            <a title="首页" href="{WEB_PATH}"> <i class="{wc:$f_home}">&nbsp;</i> 首页
+            <a title="首页" href="/"> <i class="{wc:$f_home}">&nbsp;</i> 首页
             </a>
         </li>
         <li class="f_whole">
@@ -205,8 +205,8 @@
             </a>
         </li>
         <li class="f_personal">
-            <a title="我的云购" href="{WEB_PATH}/mobile/home">
-                <i class="{wc:$f_personal}">&nbsp;</i> 我的云购
+            <a title="我的购买" href="{WEB_PATH}/mobile/home">
+                <i class="{wc:$f_personal}">&nbsp;</i> 我的购买
             </a>
         </li>
     </ul>
@@ -232,15 +232,15 @@
             </a>
             <i class="xb"></i>
         </div>
-        <div id="top_div1">
-            <a id="btnGotoTop1" onclick="Show_Hidden(btnGotoTop3)">
-                <i class="s2"></i>
-            </a>
-        </div>
+        <!--<div id="top_div1">-->
+            <!--<a id="btnGotoTop1" onclick="Show_Hidden(btnGotoTop3)">-->
+                <!--<i class="s2"></i>-->
+            <!--</a>-->
+        <!--</div>-->
         <div id="top_div">
-            <a id="btnGotoTop1" onclick="Show_Hidden(btnGotoTop3)">
-                <i class="s2"></i>
-            </a>
+            <!--<a id="btnGotoTop1" onclick="Show_Hidden(btnGotoTop3)">-->
+                <!--<i class="s2"></i>-->
+            <!--</a>-->
             <a id="btnGotoTop" href="javascript:;">
                 <i class="s1"></i>
             </a>
@@ -259,18 +259,18 @@
     window.onscroll = function() {
         var t = document.documentElement.scrollTop || document.body.scrollTop;
         var top_div = document.getElementById("top_div");
-        var s = document.documentElement.scrollTop || document.body.scrollTop;
-        var top_div1 = document.getElementById("top_div1");
+//        var s = document.documentElement.scrollTop || document.body.scrollTop;
+//        var top_div1 = document.getElementById("top_div1");
         if (t >= 200) {
             top_div.style.display = "block";
         } else {
             top_div.style.display = "none";
         }
-        if (s >= 200) {
-            top_div1.style.display = "none";
-        } else {
-            top_div1.style.display = "block";
-        }
+//        if (s >= 200) {
+//            top_div1.style.display = "none";
+//        } else {
+//            top_div1.style.display = "block";
+//        }
 
     }
 

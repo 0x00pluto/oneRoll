@@ -64,7 +64,7 @@ class model
     public function GetOne($sql, $info = array('type' => 1))
     {
 //        var_dump(debug_backtrace()
-        var_dump($sql);
+//        var_dump($sql);
         return false;
         if (empty($sql)) return false;
         if (!is_array($info)) return false;

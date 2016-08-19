@@ -81,7 +81,7 @@
         <div class="banner_top" style="margin-top: 10px;">
             <ul>
                 <li class="qian">
-                    <a href="{WEB_PATH}/mobile/home/userqiandao"> <em>签到</em>
+                    <a href="{WEB_PATH}/mobile/home/userqiandao"> <em>客服</em>
                     </a>
                 </li>
                 <li class="shai">
@@ -95,7 +95,7 @@
                 </li>
                 <li class="new">
                     <a href="{WEB_PATH}/mobile/mobile/about">
-                        <em>帮助</em>
+                        <em>问题</em>
                     </a>
                 </li>
             </ul>
@@ -114,9 +114,6 @@
                         {wc:loop:end}
                     </ul>
                     <div id="demo2"></div>
-                </div>
-                <div style="position: absolute;width: 40px;right: 3px;top: 9px;">
-                    <a style="color: #666;" href="{WEB_PATH}/mobile/mobile/gonggao/">更多>></a>
                 </div>
             </div>
             <script>
@@ -141,65 +138,6 @@
                     MyMar = setInterval(Marquee, speed)
                 }
             </script>
-            <a style="border-bottom: 1px solid #dcdcdc;" href="{WEB_PATH}/mobile/mobile/lottery">
-                最新揭晓
-                <label style="position:absolute; right:1rem; cursor:pointer;">显示全部&nbsp;></label>
-            </a>
-            <ul class="ul" style="border-right: 1px solid #dcdcdc;">
-                <script>
-                    (function () {
-                        DuoBao.refresh_prize = function refresh_prize() {
-                            var $el = $($(this).data('dom_id'));
-                            $.get($el.attr('title'), {
-                                raw_only: 'true'
-                            }, function (data) {
-                                $el.html(data);
-                            });
-                        };
-
-                    })();
-                </script>
-                {wc:loop $shopqishu $k $qishu} {wc:php:start} $qishu['q_user'] = unserialize($qishu['q_user']);
-                {wc:php:end} {wc:if $qishu['q_showtime']=='N'}
-                <li style="position: relative;">
-                    <a href="{WEB_PATH}/mobile/mobile/item/{wc:$qishu['id']}" id="r{wc:$qishu['id']}"
-                       title="{WEB_PATH}/mobile/mobile/itemajax/{wc:$qishu['id']}">
-                        <div style="width:40%;float: left;">
-                            <img style="width:100%;" src="{G_UPLOAD_PATH}/{wc:$qishu['thumb']}"
-                                 class="lazy_loading_image"></div>
-                        <div class="txt" style="float: left;">
-                            <h6>{wc:fun:_strcut($qishu['title'],30)}</h6>
-                            <div class="zj">
-                                <span style="color: #5bb6ea;">{wc:$qishu['luckRoleName']}</span>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                {wc:else}
-                <li style="position: relative;">
-                    <a href="{WEB_PATH}/mobile/mobile/item/{wc:$qishu['id']}" id="r{wc:$qishu['id']}"
-                       title="{WEB_PATH}/mobile/mobile/itemajax/{wc:$qishu['id']}">
-                        <div style="width:40%;float: left;">
-                            <img style="width:100%;" src="{G_UPLOAD_PATH}/{wc:$qishu['thumb']}"
-                                 class="lazy_loading_image"></div>
-                        <div class="txt" style="float: left;">
-                            <h6>{wc:fun:_strcut($qishu['title'],30)}</h6>
-                            <div class="zj">
-                                <div style="text-align:left;white-space: nowrap; text-overflow: ellipsis; overflow: hidden; color:#f04900;padding:0.4rem 0 0 0;">
-                                    <time class="countdown"
-                                          style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden;font-size: 1rem;line-height: 2rem;height: 2rem;"
-                                          data-dom_id="#r{wc:$qishu['id']}"
-                                          data-sec="{wc:fun:ceil($qishu['q_end_time']-time())}" data-text="正在揭晓..."
-                                          data-delay="1000" data-callback="DuoBao.refresh_prize">开始倒计时
-                                    </time>
-                                    <div id="daojishi">倒计时</div>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                {wc:if:end} {wc:loop:end}
-            </ul>
         </div>
         <style>
             #fldh {
@@ -219,7 +157,7 @@
             -->
                 <ul class="lbul" id="divGoodsNav">
                     <li id="jiexiaos" class="current" order="10">
-                        <a href="javascript:;">即将揭晓</a>
+                        <a href="javascript:;">最热</a>
                     </li>
                     <li class="" order="20">
                         <a href="javascript:;">最快</a>
@@ -239,14 +177,12 @@
                             <dd class="a1"><a href="{WEB_PATH}/mobile/mobile/glist"><img
                                     style="width: 30px;height: 30px;border-radius: 3px;float: left;margin:10px 5px 0 0;"
                                     src="/statics/templates/yungou/images/mobile/moren.png" alt="">全部分类</a></dd>
-                            {wc:getlist sql="select `cateid`,`name`,`pic_url` from `@#_category` where `model`='1' and `parentid` = '0' order by `order` desc"}
-                            {wc:loop $data $categoryx}
+                            {wc:loop $categorys $categoryx}
                             <dd class="a1"><a href="{WEB_PATH}/mobile/mobile/fen/{wc:$categoryx['cateid']}"><img
                                     style="width: 30px;height: 30px;border-radius: 3px;float: left;margin:10px 5px 0 0;"
                                     src="{G_UPLOAD_PATH}/{wc:$categoryx['pic_url']}"><span>{wc:$categoryx['name']}</span></a>
                             </dd>
                             {wc:loop:end}
-                            {wc:getlist:end}
                         </dl>
                     </li>
                 </ul>
@@ -297,9 +233,9 @@ if( ROUTE_C == 'mobile' && ROUTE_A == 'glist'){ $f_whole = 'cur'; }else if( ROUT
                 $("#pagenum").val(data[0].page);
                 for (var i = 0; i < data.length; i++) {
                     var ul = '<ul><li>';
-                    ul += '<span id="' + data[i].id + '" class="z-Limg" style="position:relative;display:block;"><img src="{G_UPLOAD_PATH}/' + data[i].thumb + '"><div id="jiazhi1">价值：￥' + data[i].money + '</div></span>';
+                    ul += '<span id="' + data[i].id + '" class="z-Limg" style="position:relative;display:block;"><img src="{G_UPLOAD_PATH}/' + data[i].thumb + '"><div id="jiazhi1">' + data[i].money + '元\n商品</div></span>';
                     ul += '<div style="margin-top:15px;" class="goodsListR">';
-                    ul += '<h2 id="' + data[i].id + '">(第' + data[i].qishu + '期)' + data[i].title + '</h2>';
+                    ul += '<h2 id="' + data[i].id + '">' + data[i].title + '</h2>';
                     ul += '</div>';
                     ul += '<div class="pRate item_bottom_container">';
                     ul += '<div class="Progress-bar jdt_container" id="' + data[i].id + '">';

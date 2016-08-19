@@ -42,6 +42,7 @@ class mobile extends base
 
         $shopqishu = $this->db->GetList("select * from `@#_shoplist` where `q_end_time` !='' ORDER BY `q_end_time` DESC LIMIT 4");
 
+        $categorys = rpc_a_get_category("", "");
 
         include templates("mobile/index", "index");
 
@@ -168,32 +169,21 @@ class mobile extends base
 
         $end = 10;
         $star = ($p - 1) * $end;
-        $select_w = '';
         if ($select == 10) {
-            $select_w = 'order by `shenyurenshu` asc';
+            $count = rpc_mall_getAllSellingGoods($star, $end);
         }
         if ($select == 20) {
-            $select_w = 'order by `qishu` desc';
+            $count = rpc_mall_getAllSellingGoods($star, $end);
         }
         if ($select == 30) {
-            $select_w = 'order by `money` desc';
+            $count = rpc_mall_getAllSellingGoods($star, $end);
         }
         if ($select == 40) {
-            $select_w = 'order by `money` asc';
-        }
-
-        if ($select == '10') {
-            $count = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null $select_w");
-        } elseif ($select == '20') {
-            $count = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null $select_w");
-        } elseif ($select == '30') {
-            $count = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null $select_w");
-        } elseif ($select == '40') {
-            $count = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null $select_w");
+            $count = rpc_mall_getAllSellingGoods($star, $end);
         }
 
 
-        $shoplist = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null $select_w limit $star,$end");
+        $shoplist = $count;
         $max_renqi_qishu = 1;
         $max_renqi_qishu_id = 1;
 
@@ -241,11 +231,14 @@ class mobile extends base
     public function fen()
     {
         $fenid = htmlspecialchars($this->segment(4));
-        $fenname = $this->db->GetOne("SELECT name FROM `@#_category` WHERE `cateid`  = '$fenid'");
+//        $fenname = $this->db->GetOne("SELECT name FROM `@#_category` WHERE `cateid`  = '$fenid'");
+        $fenname = rpc_a_get_categoryById($fenid);
         $webname = $this->_cfg['web_name'];
+
         $title = "$fenname[name]" . _cfg("web_name");
         $key = $fenname[name];
-        $shoplist = $this->db->GetList("SELECT `qishu`,`thumb`,`title`,`id`,`sid`,`zongrenshu`,`canyurenshu`,`shenyurenshu`,`money` FROM `@#_shoplist` WHERE `q_user`  = '' AND `cateid`='$fenid' order by `canyurenshu` DESC");
+//        $shoplist = $this->db->GetList("SELECT `qishu`,`thumb`,`title`,`id`,`sid`,`zongrenshu`,`canyurenshu`,`shenyurenshu`,`money` FROM `@#_shoplist` WHERE `q_user`  = '' AND `cateid`='$fenid' order by `canyurenshu` DESC");
+        $shoplist = rpc_mall_getAllSellingGoodsByBigKindId($fenid, 0, 100);
         $list = count($shoplist);
         include templates("mobile/index", "fen");
     }
@@ -300,20 +293,29 @@ class mobile extends base
         if (!$select) {
             $select = '10';
         }
-        if ($cate_band) {
+
+
+        $fen1 = null;
+        if ($cate_band != 'list') {
             $fen1 = intval($cate_band);
             $cate_band = 'list';
         }
-        if (empty($fen1)) {
-            $brand = $this->db->GetList("select * from `@#_brand` where 1 order by `order` DESC");
-            $daohang = '所有分类';
-        } else {
-            $brand = $this->db->GetList("select * from `@#_brand` where `cateid`='$fen1' order by `order` DESC");
-            $daohang = $this->db->GetOne("select * from `@#_category` where `cateid` = '$fen1' order by `order` DESC");
-            $daohang = $daohang['name'];
-        }
 
-        $category = $this->db->GetList("select * from `@#_category` where `model` = '1'");
+//        \hellaEngine\support\dump([
+//            $cate_band,
+//            $select,
+//            $p
+//        ]);
+//        if (empty($fen1)) {
+//            $daohang = '所有分类';
+//        } else {
+
+//            $daohang = $this->db->GetOne("select * from `@#_category` where `cateid` = '$fen1' order by `order` DESC");
+//            $daohang = rpc_a_get_categoryById($fen1);
+//            $daohang = $daohang['name'];
+//        }
+
+//        $category = $this->db->GetList("select * from `@#_category` where `model` = '1'");
 
         //分页
 
@@ -339,16 +341,20 @@ class mobile extends base
             $select_w = 'order by `money` ASC';
         }
 
-        if ($fen1) {
-            $count = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null and `cateid`='$fen1' $select_w");
+        if (!is_null($fen1)) {
+            $count = rpc_mall_getAllSellingGoodsByBigKindId($fen1, $star, $end);
+            $shoplist = $count;
+//            $count = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null and `cateid`='$fen1' $select_w");
         } else {
-            $count = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null $select_w");
+            $count = rpc_mall_getAllSellingGoods($star, $end);
+            $shoplist = $count;
+//            $count = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null $select_w");
         }
-        if ($fen1) {
-            $shoplist = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null and `cateid`='$fen1' $select_w limit $star,$end");
-        } else {
-            $shoplist = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null $select_w limit $star,$end");
-        }
+//        if ($fen1) {
+//            $shoplist = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null and `cateid`='$fen1' $select_w limit $star,$end");
+//        } else {
+//            $shoplist = $this->db->GetList("select * from `@#_shoplist` where `q_uid` is null $select_w limit $star,$end");
+//        }
         $max_renqi_qishu = 1;
         $max_renqi_qishu_id = 1;
 
@@ -493,7 +499,6 @@ class mobile extends base
         }
 
 
-
         $sid = $item['sid'];
         $sid_code = $mysql_model->GetOne("select * from `@#_shoplist` where `sid`='$sid' order by `id` DESC LIMIT 1,1");
         $sid_go_record = $mysql_model->GetOne("select * from `@#_member_go_record` where `shopid`='$sid_code[sid]' and `uid`='$sid_code[q_uid]' order by `id` DESC LIMIT 1");
@@ -514,23 +519,23 @@ class mobile extends base
 
         //期数显示
         $loopqishu = '';
-        $loopqishu .= '<li class="cur"><a href="javascript:;">' . "第" . $item['qishu'] . "期</a><b></b></li>";
-
-        if (empty($itemlist)) {
-            foreach ($itemlist as $qitem) {
-                $loopqishu .= '<li><a href="' . WEB_PATH . '/mobile/mobile/item/' . $qitem['id'] . '" class="">第' . $qitem['qishu'] . '期</a></li>';
-
-            }
-        }
-
-        foreach ($itemlist as $qitem) {
-            if ($qitem['id'] == $itemid) {
-
-                $loopqishu .= '<li class="cur"><a href="javascript:;">' . "第" . $itemlist[0]['qishu'] . "期</a><b></b></li>";
-            } else {
-                $loopqishu .= '<li><a href="' . WEB_PATH . '/mobile/mobile/dataserver/' . $qitem['id'] . '" >第' . $qitem['qishu'] . '期</a></li>';
-            }
-        }
+//        $loopqishu .= '<li class="cur"><a href="javascript:;">' . "第" . $item['qishu'] . "期</a><b></b></li>";
+//
+//        if (empty($itemlist)) {
+//            foreach ($itemlist as $qitem) {
+//                $loopqishu .= '<li><a href="' . WEB_PATH . '/mobile/mobile/item/' . $qitem['id'] . '" class="">第' . $qitem['qishu'] . '期</a></li>';
+//
+//            }
+//        }
+//
+//        foreach ($itemlist as $qitem) {
+//            if ($qitem['id'] == $itemid) {
+//
+//                $loopqishu .= '<li class="cur"><a href="javascript:;">' . "第" . $itemlist[0]['qishu'] . "期</a><b></b></li>";
+//            } else {
+//                $loopqishu .= '<li><a href="' . WEB_PATH . '/mobile/mobile/dataserver/' . $qitem['id'] . '" >第' . $qitem['qishu'] . '期</a></li>';
+//            }
+//        }
         /*
         $gorecode=array();
         if(!empty($itemlist)){
@@ -626,7 +631,7 @@ class mobile extends base
         if ($select == '10') {
             // $count=$this->db->GetList("select * from `@#_member_go_record` where `shopid`='$itemid' $select_w");
 //            $count = $this->db->GetList("select *,from_unixtime(a.time) as time2,b.headimg from `@#_member_go_record` as a,`@#_member` as b where a.uid = b.uid and `shopid`='$itemid' $select_w");
-            $count = rpc_mall_getAllTradeDetailsByGoodsId($itemid,$star,$end);
+            $count = rpc_mall_getAllTradeDetailsByGoodsId($itemid, $star, $end);
         }
 
         // $shoplist=$this->db->GetList("select * from `@#_member_go_record` where `shopid`='$itemid' $select_w limit $star,$end");
@@ -787,14 +792,12 @@ class mobile extends base
         }
 
 
-
         if (is_null($item['q_user_code'])) {
             _messagemobile("该商品正在进行中...");
         }
 //        $itemlist = $this->db->GetList("select * from `@#_shoplist` where `sid`='$item[sid]' order by `qishu` DESC");
         $storageId = $item['storageGoodsId'];
         $itemlist = rpc_mall_getGoodsByStorageId($item['storageGoodsId']);
-
 
 
 //        \hellaEngine\support\dump($item['storageGoodsId']);
@@ -925,6 +928,7 @@ class mobile extends base
             $shop = explode("&", $attach);
             gopay($member, $shop[0], $shop[1], $shop[2]);
         }
+
     }
 
     //最新揭晓
@@ -932,11 +936,13 @@ class mobile extends base
     {
         $webname = $this->_cfg['web_name'];
         //最新揭晓
-        $shopqishu = $this->db->GetList("select * from `@#_shoplist` where `q_end_time` is not null ORDER BY `q_end_time` DESC LIMIT 0,4");
+//        $shopqishu = $this->db->GetList("select * from `@#_shoplist` where `q_end_time` is not null ORDER BY `q_end_time` DESC LIMIT 0,4");
 
+//        $shopqishu = rpc_mall_getAllRecentFinishGoods(0,6);
+//        $shoplist = $shopqishu;
 
-        $shoplist = $this->db->GetList("select * from `@#_shoplist` where 1 ORDER BY `canyurenshu` DESC LIMIT 4");
-        $member_record = $this->db->GetList("select * from `@#_member_go_record` order by id DESC limit 6");
+//        $shoplist = $this->db->GetList("select * from `@#_shoplist` where 1 ORDER BY `canyurenshu` DESC LIMIT 4");
+//        $member_record = $this->db->GetList("select * from `@#_member_go_record` order by id DESC limit 6");
         $key = "最新揭晓";
         include templates("mobile/index", "lottery");
     }
@@ -1055,8 +1061,9 @@ class mobile extends base
     public function calResult()
     {
         $itemid = intval($this->segment(4));
-        $item = $this->db->GetOne("select * from `@#_shoplist` where `id`='$itemid' LIMIT 1");
+//        $item = $this->db->GetOne("select * from `@#_shoplist` where `id`='$itemid' LIMIT 1");
 
+        $item = rpc_mall_getGoodsInfo($itemid);
         $h = abs(date("H", $item['q_end_time']));
         $i = date("i", $item['q_end_time']);
         $s = date("s", $item['q_end_time']);
@@ -1101,6 +1108,7 @@ class mobile extends base
     //访问个人主页
     public function userindex()
     {
+        var_dump("1");
         $webname = $this->_cfg['web_name'];
         $uid = safe_replace($this->segment(4));
         //$uid=intval($this->segment(4))-1000000000;

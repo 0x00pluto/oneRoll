@@ -64,6 +64,15 @@ function rpc_a_get_shop_active_list($sql, $info)
         ])->get_retdata();
 }
 
+function rpc_a_get_categoryById($categoryId)
+{
+    $categoryId = intval($categoryId);
+    $categorys = rpc_a_get_category("", "");
+
+    return __createSingleAdapter($categorys[$categoryId],
+        \arrayAdapter\categoryAdapter::class);
+}
+
 function rpc_a_get_category($sql, $info)
 {
     $categorys = [
@@ -188,4 +197,68 @@ function rpc_mall_getAllTradeDetailsByGoodsId($goodsId, $start, $count)
             ]
         )->get_retdata()
     );
+}
+
+/**
+ * 助手方法
+ * @param $rpcFunction
+ * @param array $params
+ * @return \arrayAdapter\arrayAdapter[]
+ */
+function __help__createMultiArrayAdapterRpc($rpcFunction, $params = [])
+{
+    return __createMultiArrayAdapter(
+        callRpc(
+            $rpcFunction,
+            $params
+        )->get_retdata()
+    );
+}
+
+/**
+ * @param $bigKindId
+ * @param $start
+ * @param $count
+ * @return \arrayAdapter\arrayAdapter[]
+ */
+function rpc_mall_getAllSellingGoodsByBigKindId($bigKindId, $start, $count)
+{
+    return __help__createMultiArrayAdapterRpc(
+        'mall.getAllSellingGoodsByBigKindId',
+        [
+            'bigKindId' => $bigKindId,
+            'start' => $start,
+            'count' => $count
+        ]
+    );
+}
+
+/**
+ * @param $start
+ * @param $count
+ * @return \arrayAdapter\arrayAdapter[]
+ */
+function rpc_mall_getAllSellingGoods($start, $count)
+{
+    return __help__createMultiArrayAdapterRpc(
+        'mall.getAllSellingGoods',
+        [
+            "start" => $start,
+            "count" => $count
+        ]
+    );
+}
+
+/**
+ * @param $start
+ * @param $count
+ * @return \arrayAdapter\arrayAdapter[]
+ */
+function rpc_mall_getAllRecentFinishGoods($start, $count)
+{
+    return __help__createMultiArrayAdapterRpc('mall.getAllFinishGoods',
+        [
+            "start" => $start,
+            "count" => $count
+        ]);
 }

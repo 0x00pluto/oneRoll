@@ -45,6 +45,8 @@ class application
                 exit();
             }
         } else {
+
+            var_dump($_SERVER);
             _error('Module or Controller does not exist.' . $filepath, 'Please verify that the path is correct.');
             exit();
         }
@@ -76,7 +78,7 @@ class application
             }
 
         }
-//        arrayProbe::dumpProbes();
+        arrayProbe::dumpProbes();
     }
 }
 

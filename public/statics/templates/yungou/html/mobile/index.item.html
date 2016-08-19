@@ -40,12 +40,12 @@
     <input name="hidCodeID" type="hidden" id="hidCodeID" value="{wc:$item['id']}"/>     <!--本期奖品id-->
     <section class="goodsCon pCon">
         <!-- 导航 -->
-        <div id="divPeriod" class="pNav">
-            <div class="loading"><b></b>正在加载</div>
-            <ul class="slides">
-                {wc:$loopqishu}
-            </ul>
-        </div>
+        <!--<div id="divPeriod" class="pNav">-->
+        <!--<div class="loading"><b></b>正在加载</div>-->
+        <!--<ul class="slides">-->
+        <!--{wc:$loopqishu}-->
+        <!--</ul>-->
+        <!--</div>-->
 
         {wc:php:start}
         $sysj=$item['xsjx_time']-time();
@@ -253,8 +253,8 @@
 
 
         <div class="pDetails {wc:if $item['q_end_time']!=''}pDetails-end{wc:if:end}">
-            <b>(第{wc:$item['qishu']}期){wc:$item['title']} <span></span></b>
-            <p class="price">价值：<em class="arial gray">￥{wc:$item['money']}</em></p>
+            <b>{wc:$item['title']} <span></span></b>
+            <p class="price">期号： <em class="arial gray">{wc:$item['qishu']}</em></p>
 
             {wc:if empty($item['q_end_time'])}
             <div class="Progress-bar">
@@ -264,11 +264,12 @@
 						</span>
                 </p>
                 <ul class="Pro-bar-li">
-                    <li class="P-bar01"><em>{wc:$item['canyurenshu']}</em>已参与</li>
-                    <li class="P-bar02"><em>{wc:$item['zongrenshu']}</em>总需人次</li>
-                    <li class="P-bar03"><em>{wc:$item['zongrenshu']-$item['canyurenshu']}</em>剩余</li>
+                    <li class="P-bar01">总需<em>{wc:$item['zongrenshu']}</em>人次</li>
+                    <li class="P-bar02"><!--<em>{wc:$item['canyurenshu']}</em>已参与--></li>
+                    <li class="P-bar03">剩余<em>{wc:$item['zongrenshu']-$item['canyurenshu']}</em></li>
                 </ul>
             </div>
+            <div class="pClosed">您没有参加本次夺宝哦</div>
             <input name="hidLineLink" type="hidden" id="hidLineLink"
                    value="{WEB_PATH}/mobile/mobile/item/{wc:$item['id']}"/>
             <script>
@@ -338,16 +339,20 @@
             {wc:if $item['q_end_time'] > time() }
             <div class="pClosed">正在揭晓</div>
             {wc:else}
-            <div class="pClosed">本期已揭晓</div>
+            <div class="pClosed">期号:{wc:$item['qishu']}</div>
             {wc:if:end}
             {wc:if $itemxq==1}
             <div class="pOngoing" codeid="{wc:$itemzx['id']}">
-                <div class="jiexiao" style="line-height: 35px;margin-left: 1%;width: 89%;height: 35px;">
-                    第{wc:$itemzx['qishu']}期(正在进行中……)
+                <div class="jiexiaoDesc" style="line-height: 35px;margin-right: 1%;width: 40%;height: 35px;">
+                    新一期正在火热进行中
                 </div>
-                <a style="margin:0;width: 10%;height: 33px;" class="xiangxigw" href="{WEB_PATH}/mobile/cart/cartlist"><i
-                        style="margin: 6px auto;float: none;position: relative;" id="btnCart" class="{wc:$f_car}">
-                    &nbsp;</i></a></div>
+                <div class="jiexiao" style="line-height: 35px;margin-right: 1%;width: 40%;height: 35px;">
+                    立即前往
+                </div>
+                <!--<a style="margin:0;width: 10%;height: 33px;" class="xiangxigw" href="{WEB_PATH}/mobile/cart/cartlist"><i-->
+                        <!--style="margin: 6px auto;float: none;position: relative;" id="btnCart" class="{wc:$f_car}">-->
+                    <!--&nbsp;</i></a>-->
+            </div>
             {wc:if:end}
             {wc:elseif $item['zongrenshu']==$item['canyurenshu']}
             {wc:if $item['xsjx_time']!=0}

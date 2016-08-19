@@ -1,1307 +1,1199 @@
 <?php
 
-defined('G_IN_SYSTEM')or exit('No permission resources.');
+defined('G_IN_SYSTEM') or exit('No permission resources.');
 
-System::load_app_class('base','member','no');
+System::load_app_class('base', 'member', 'no');
 
-System::load_app_fun('my','go');
+System::load_app_fun('my');
 
-System::load_app_fun('user','go');
+System::load_app_fun('user', 'go');
 
 System::load_sys_fun('send');
 
 System::load_sys_fun('user');
+System::load_sys_fun('rpcadapter');
 
-class ajax extends base {
+class ajax extends base
+{
 
     private $Mcartlist;
 
     private $Mcartlist_jf;
 
 
+    public function __construct()
+    {
 
-	public function __construct(){
+//        parent::__construct();
 
-		parent::__construct();
+        /* 		if(ROUTE_A!='userphotoup' and ROUTE_A!='singphotoup'){
 
-/* 		if(ROUTE_A!='userphotoup' and ROUTE_A!='singphotoup'){
+                    if(!$this->userinfo)_message("请登录",WEB_PATH."/mobile/user/login",3);
 
-			if(!$this->userinfo)_message("请登录",WEB_PATH."/mobile/user/login",3);
+                }	 */
 
-		}	 */
+        $this->db = System::load_sys_class('rpcmodel');
 
-		$this->db = System::load_sys_class('model');
 
+        //查询购物车的信息
 
+        $Mcartlist = _getcookie("Cartlist");
 
+        $this->Mcartlist = json_decode(stripslashes($Mcartlist), true);
 
 
-		//查询购物车的信息
+        $Mcartlist_jf = _getcookie("Cartlist_jf");
 
-		$Mcartlist=_getcookie("Cartlist");
+        $this->Mcartlist_jf = json_decode(stripslashes($Mcartlist_jf), true);
 
-		$this->Mcartlist=json_decode(stripslashes($Mcartlist),true);
+    }
 
-	
+    public function init()
+    {
 
-		$Mcartlist_jf=_getcookie("Cartlist_jf");
+        if (ROUTE_A != 'userphotoup' and ROUTE_A != 'singphotoup') {
 
-		$this->Mcartlist_jf=json_decode(stripslashes($Mcartlist_jf),true);
+            if (!$this->userinfo) _message("请登录", WEB_PATH . "/mobile/user/login", 3);
 
-	}
+        }
 
-	public function init(){
 
-	    if(ROUTE_A!='userphotoup' and ROUTE_A!='singphotoup'){
+        $member = $this->userinfo;
 
-			if(!$this->userinfo)_message("请登录",WEB_PATH."/mobile/user/login",3);
+        $title = "我的会员中心";
 
-		}
 
+        $user['code'] = 1;
 
+        $user['username'] = get_user_name($member['uid']);
 
-		$member=$this->userinfo;
+        $user['uid'] = $member['uid'];
 
-		$title="我的会员中心";
+        if (!empty($member)) {
 
+            $user['code'] = 0;
 
+        }
 
-		 $user['code']=1;
 
-		 $user['username']=get_user_name($member['uid']);
+        echo json_encode($user);
 
-		 $user['uid']=$member['uid'];
 
-		 if(!empty($member)){
+    }
 
-		   $user['code']=0;
+    //幻灯
 
-		 }
+    public function slides()
+    {
 
+        $sql = "select * from `@#_wap` where 1";
 
+        $SlideList = $this->db->GetList($sql);
 
-		echo json_encode($user);
+        if (empty($SlideList)) {
 
+            $slides['state'] = 1;
 
+        } else {
 
+            $slides['state'] = 0;
 
+            foreach ($SlideList as $key => $val) {
 
-	}
+                $shopid = ereg_replace('[^0-9]', '', $val['link']);
 
-	//幻灯
+                // $shopid=explode("/",$val['link']);
 
-	public function slides(){
+                $slides['listItems'][$key]['alt'] = $val['color'];
 
-	  $sql="select * from `@#_wap` where 1";
+                $slides['listItems'][$key]['url'] = WEB_PATH . "/mobile/mobile/item/" . $shopid;
 
-	  $SlideList=$this->db->GetList($sql);
+                $slides['listItems'][$key]['src'] = G_WEB_PATH . "/statics/uploads/" . $val['img'];
 
-	  if(empty($SlideList)){
+                $slides['listItems'][$key]['width'] = '614PX';
 
-	    $slides['state']=1;
+                $slides['listItems'][$key]['height'] = '110PX';
 
-	  }else{
 
-	   $slides['state']=0;
+            }
 
-	    foreach($SlideList as $key=>$val){
 
-		   $shopid = ereg_replace('[^0-9]','',$val['link']);
+        }
 
-		  // $shopid=explode("/",$val['link']);
+        echo json_encode($slides);
 
-		   $slides['listItems'][$key]['alt']=$val['color'];
+    }
 
-		   $slides['listItems'][$key]['url']=WEB_PATH."/mobile/mobile/item/".$shopid;
 
-		   $slides['listItems'][$key]['src']=G_WEB_PATH."/statics/uploads/".$val['img'];
+    // 今日揭晓商品
 
-		   $slides['listItems'][$key]['width']='614PX';
+    public function show_jrjxshop()
+    {
 
-		   $slides['listItems'][$key]['height']='110PX';
+        $pagetime = safe_replace($this->segment(4));
 
 
+        $w_jinri_time = strtotime(date('Y-m-d'));
 
-		}
+        $w_minri_time = strtotime(date('Y-m-d', strtotime("+1 day")));
 
 
+        $jinri_shoplist = $this->db->GetList("select * from `@#_shoplist` where `xsjx_time` > '$w_jinri_time' and `xsjx_time` < '$w_minri_time' order by xsjx_time limit 0,3 ");
 
-	  }
 
-	   echo json_encode($slides);
+        if (!empty($jinri_shoplist)) {
 
-	}
+            $m['errorCode'] = 0;
 
+        } else {
 
+            $m['errorCode'] = 1;
 
-   // 今日揭晓商品
+        }
 
-    public function show_jrjxshop(){
+        //echo $pagetime;
 
-		$pagetime=safe_replace($this->segment(4));
+        echo json_encode($m);
 
 
+    }
 
+    //最新揭晓商品
 
+    public function show_newjxshop()
+    {
 
-		$w_jinri_time = strtotime(date('Y-m-d'));
 
-		$w_minri_time = strtotime(date('Y-m-d',strtotime("+1 day")));
+        //最新揭晓
 
+        $shopqishu = $this->db->GetList("select * from `@#_shoplist` where `q_end_time` !='' ORDER BY `q_end_time` DESC LIMIT 4");
 
 
+        echo json_encode($shopqishu);
 
 
-		$jinri_shoplist = $this->db->GetList("select * from `@#_shoplist` where `xsjx_time` > '$w_jinri_time' and `xsjx_time` < '$w_minri_time' order by xsjx_time limit 0,3 ");
+    }
 
 
+    //即将揭晓商品
 
-		if(!empty($jinri_shoplist)){
+    public function show_msjxshop()
+    {
 
-		   $m['errorCode']=0;
+        //暂时没做
 
-		}else{
 
-		   $m['errorCode']=1;
+        //即将揭晓商品
 
-		}
+        $shoplist['listItems'][0]['codeID'] = 14;  //商品id
 
-		//echo $pagetime;
+        $shoplist['listItems'][0]['period'] = 3;  //商品期数
 
-		echo json_encode($m);
+        $shoplist['listItems'][0]['goodsSName'] = '苹果';  //商品名称
 
+        $shoplist['listItems'][0]['seconds'] = 10;  //商品名称
 
 
-	}
+        $shoplist['errorCode'] = 0;
 
-	//最新揭晓商品
+        //echo json_encode($shoplist);
 
-	public function show_newjxshop(){
 
-
-
-		//最新揭晓
-
-		$shopqishu=$this->db->GetList("select * from `@#_shoplist` where `q_end_time` !='' ORDER BY `q_end_time` DESC LIMIT 4");
-
-
-
-		echo json_encode($shopqishu);
-
-
-
-	}
-
-
-
-	//即将揭晓商品
-
-	public function show_msjxshop(){
-
-	      //暂时没做
-
-
-
-
-
-
-
-		//即将揭晓商品
-
-	    $shoplist['listItems'][0]['codeID']=14;  //商品id
-
-	    $shoplist['listItems'][0]['period']=3;  //商品期数
-
-	    $shoplist['listItems'][0]['goodsSName']='苹果';  //商品名称
-
-	    $shoplist['listItems'][0]['seconds']=10;  //商品名称
-
-
-
-		$shoplist['errorCode']=0;
-
-		//echo json_encode($shoplist);
-
-
-
-	}
-
+    }
 
 
     //购物车数量
 
-	public function cartnum(){
+    public function cartnum()
+    {
 
-	  $Mcartlist=$this->Mcartlist;
+        $Mcartlist = $this->Mcartlist;
 
-	  if(is_array($Mcartlist)){
+        if (is_array($Mcartlist)) {
 
-	  	  $cartnum['code']=0;
+            $cartnum['code'] = 0;
 
-	      $cartnum['num']=count($Mcartlist);
+            $cartnum['num'] = count($Mcartlist);
 
-	  }else{
+        } else {
 
-	  	  $cartnum['code']=1;
+            $cartnum['code'] = 1;
 
-	      $cartnum['num']=0;
+            $cartnum['num'] = 0;
 
-	  }
+        }
 
-      //var_dump($Mcartlist);
+        //var_dump($Mcartlist);
 
-	  echo json_encode($cartnum);
+        echo json_encode($cartnum);
 
-	}
+    }
 
 
+    //添加购物车
 
-	//添加购物车
+    public function addShopCart()
+    {
 
-	public function addShopCart(){
+        $ShopId = safe_replace($this->segment(4));
 
-	  $ShopId=safe_replace($this->segment(4));
+        $ShopNum = safe_replace($this->segment(5));
 
-	  $ShopNum=safe_replace($this->segment(5));
 
+        $cartbs = safe_replace($this->segment(6));//标识从哪里加的购物车
 
 
-	  $cartbs=safe_replace($this->segment(6));//标识从哪里加的购物车
+        $shopis = 0;          //0表示不存在  1表示存在
 
+        $Mcartlist = $this->Mcartlist;
 
+        if ($ShopId == 0 || $ShopNum == 0) {
 
-	  $shopis=0;          //0表示不存在  1表示存在
 
-	  $Mcartlist=$this->Mcartlist;
+            $cart['code'] = 1;   //表示添加失败
 
-	if($ShopId==0 || $ShopNum==0){
 
+        } else {
 
+            if (is_array($Mcartlist)) {
 
-	  $cart['code']=1;   //表示添加失败
+                foreach ($Mcartlist as $key => $val) {
 
+                    if ($key == $ShopId) {
 
+                        if (isset($cartbs) && $cartbs == 'cart') {
 
-	}else{
+                            $Mcartlist[$ShopId]['num'] = $ShopNum;
 
-		  if(is_array($Mcartlist)){
+                        } else {
 
-			foreach($Mcartlist as $key=>$val){
+                            $Mcartlist[$ShopId]['num'] = $val['num'] + $ShopNum;
 
-			   if($key==$ShopId){
+                        }
 
-			      if(isset($cartbs) && $cartbs=='cart'){
+                        $shopis = 1;
 
-	                $Mcartlist[$ShopId]['num']=$ShopNum;
+                    } else {
 
-				  }else{
+                        $Mcartlist[$key]['num'] = $val['num'];
 
-				    $Mcartlist[$ShopId]['num']=$val['num']+$ShopNum;
+                    }
 
-				  }
+                }
 
-				  $shopis=1;
 
-			   }else{
+            } else {
 
-				  $Mcartlist[$key]['num']=$val['num'];
+                $Mcartlist = array();
 
-			   }
+                $Mcartlist[$ShopId]['num'] = $ShopNum;
 
-			}
+            }
 
 
+            if ($shopis == 0) {
 
-		  }else{
+                $Mcartlist[$ShopId]['num'] = $ShopNum;
 
-			  $Mcartlist =array();
+            }
 
-			  $Mcartlist[$ShopId]['num']=$ShopNum;
 
-		  }
+            _setcookie('Cartlist', json_encode($Mcartlist), '');
 
+            $cart['code'] = 0;   //表示添加成功
 
+        }
 
 
+        $cart['num'] = count($Mcartlist);    //表示现在购物车有多少条记录
 
-           if($shopis==0){
 
-		     $Mcartlist[$ShopId]['num']=$ShopNum;
+        echo json_encode($cart);
 
-		   }
 
+    }
 
+    //添加购物车
 
-       _setcookie('Cartlist',json_encode($Mcartlist),'');
+    public function jf_addShopCart()
+    {
 
-	  $cart['code']=0;   //表示添加成功
+        $ShopId = safe_replace($this->segment(4));
 
-	}
+        $ShopNum = safe_replace($this->segment(5));
 
 
+        $cartbs = safe_replace($this->segment(6));//标识从哪里加的购物车
 
-	  $cart['num']=count($Mcartlist);    //表示现在购物车有多少条记录
 
+        $shopis = 0;          //0表示不存在  1表示存在
 
+        $Mcartlist = $this->Mcartlist_jf;
 
-	  echo json_encode($cart);
+        if ($ShopId == 0 || $ShopNum == 0) {
 
 
+            $cart['code'] = 1;   //表示添加失败
 
-	}
 
-	//添加购物车
+        } else {
 
-	public function jf_addShopCart(){
+            if (is_array($Mcartlist)) {
 
-		$ShopId=safe_replace($this->segment(4));
+                foreach ($Mcartlist as $key => $val) {
 
-		$ShopNum=safe_replace($this->segment(5));
+                    if ($key == $ShopId) {
 
+                        if (isset($cartbs) && $cartbs == 'cart') {
 
+                            $Mcartlist[$ShopId]['num'] = $ShopNum;
 
-		$cartbs=safe_replace($this->segment(6));//标识从哪里加的购物车
+                        } else {
 
+                            $Mcartlist[$ShopId]['num'] = $val['num'] + $ShopNum;
 
+                        }
 
-		$shopis=0;          //0表示不存在  1表示存在
+                        $shopis = 1;
 
-		$Mcartlist=$this->Mcartlist_jf;
+                    } else {
 
-		if($ShopId==0 || $ShopNum==0){
+                        $Mcartlist[$key]['num'] = $val['num'];
 
+                    }
 
+                }
 
-		$cart['code']=1;   //表示添加失败
 
+            } else {
 
+                $Mcartlist = array();
 
-		}else{
+                $Mcartlist[$ShopId]['num'] = $ShopNum;
 
-		  if(is_array($Mcartlist)){
+            }
 
-			foreach($Mcartlist as $key=>$val){
 
-			   if($key==$ShopId){
+            if ($shopis == 0) {
 
-			      if(isset($cartbs) && $cartbs=='cart'){
+                $Mcartlist[$ShopId]['num'] = $ShopNum;
 
-		            $Mcartlist[$ShopId]['num']=$ShopNum;
+            }
 
-				  }else{
 
-				    $Mcartlist[$ShopId]['num']=$val['num']+$ShopNum;
+            _setcookie('Cartlist_jf', json_encode($Mcartlist), '');
 
-				  }
+            $cart['code'] = 0;   //表示添加成功
 
-				  $shopis=1;
+        }
 
-			   }else{
 
-				  $Mcartlist[$key]['num']=$val['num'];
+        $cart['num'] = count($Mcartlist);    //表示现在购物车有多少条记录
 
-			   }
 
-			}
+        echo json_encode($cart);
 
 
+    }
 
-		    }else{
 
-				$Mcartlist =array();
+    public function delCartItem()
+    {
 
-				$Mcartlist[$ShopId]['num']=$ShopNum;
+        $ShopId = safe_replace($this->segment(4));
 
-		    }
 
+        $cartlist = $this->Mcartlist;
 
 
+        if ($ShopId == 0) {
 
 
-		    if($shopis==0){
+            $cart['code'] = 1;   //删除失败
 
-		    	$Mcartlist[$ShopId]['num']=$ShopNum;
 
-		    }
+        } else {
 
+            if (is_array($cartlist)) {
 
+                if (count($cartlist) == 1) {
 
-			_setcookie('Cartlist_jf',json_encode($Mcartlist),'');
+                    foreach ($cartlist as $key => $val) {
 
-			$cart['code']=0;   //表示添加成功
+                        if ($key == $ShopId) {
 
-		}
+                            $cart['code'] = 0;
 
+                            _setcookie('Cartlist', '', '');
 
+                        } else {
 
-		$cart['num']=count($Mcartlist);    //表示现在购物车有多少条记录
+                            $cart['code'] = 1;
 
+                        }
 
+                    }
 
-		echo json_encode($cart);
 
+                } else {
 
+                    foreach ($cartlist as $key => $val) {
 
-	}
+                        if ($key == $ShopId) {
 
+                            $cart['code'] = 0;
 
+                        } else {
 
-	public function delCartItem(){
+                            $Mcartlist[$key]['num'] = $val['num'];
 
-	   $ShopId=safe_replace($this->segment(4));
+                        }
 
+                    }
 
 
-	   $cartlist=$this->Mcartlist;
+                    _setcookie('Cartlist', json_encode($Mcartlist), '');
 
 
+                }
 
-		if($ShopId==0){
 
+            } else {
 
+                $cart['code'] = 1;   //删除失败
 
-		  $cart['code']=1;   //删除失败
+            }
 
 
+        }
 
-		}else{
+        echo json_encode($cart);
 
-			   if(is_array($cartlist)){
+    }
 
-			      if(count($cartlist)==1){
+    public function delCartItem_jf()
+    {
 
-				     foreach($cartlist as $key=>$val){
+        $ShopId = safe_replace($this->segment(4));
 
-					   if($key==$ShopId){
 
-					     $cart['code']=0;
+        $cartlist = $this->Mcartlist_jf;
 
-						    _setcookie('Cartlist','','');
 
-						}else{
+        if ($ShopId == 0) {
 
-					     $cart['code']=1;
 
-					   }
+            $cart['code'] = 1;   //删除失败
 
-					 }
 
+        } else {
 
+            if (is_array($cartlist)) {
 
-				  }else{
+                if (count($cartlist) == 1) {
 
-					   foreach($cartlist as $key=>$val){
+                    foreach ($cartlist as $key => $val) {
 
-							if($key==$ShopId){
+                        if ($key == $ShopId) {
 
-							  $cart['code']=0;
+                            $cart['code'] = 0;
 
-							}else{
+                            _setcookie('Cartlist_jf', '', '');
 
-							  $Mcartlist[$key]['num']=$val['num'];
+                        } else {
 
-							}
+                            $cart['code'] = 1;
 
-						}
+                        }
 
+                    }
 
 
-						   _setcookie('Cartlist',json_encode($Mcartlist),'');
+                } else {
 
+                    foreach ($cartlist as $key => $val) {
 
+                        if ($key == $ShopId) {
 
-					}
+                            $cart['code'] = 0;
 
+                        } else {
 
+                            $Mcartlist[$key]['num'] = $val['num'];
 
-				}else{
+                        }
 
-				   $cart['code']=1;   //删除失败
+                    }
 
-				}
 
+                    _setcookie('Cartlist_jf', json_encode($Mcartlist), '');
 
 
-		}
+                }
 
-		echo json_encode($cart);
 
-	}
+            } else {
 
-public function delCartItem_jf(){
+                $cart['code'] = 1;   //删除失败
 
-	   $ShopId=safe_replace($this->segment(4));
+            }
 
 
+        }
 
-	   $cartlist=$this->Mcartlist_jf;
+        echo json_encode($cart);
 
+    }
 
+    public function getCodeState()
+    {
 
-		if($ShopId==0){
+        $itemid = safe_replace($this->segment(4));
 
+        $item = $mysql_model->GetOne("select * from `@#_shoplist` where `id`='" . $itemid . "' LIMIT 1");
 
 
-		  $cart['code']=1;   //删除失败
+        $a['Code'] = 1;
 
+        if (!$item) {
 
+            $a['Code'] = 0;
 
-		}else{
+        }
 
-			   if(is_array($cartlist)){
 
-			      if(count($cartlist)==1){
+        echo json_encode($a);
 
-				     foreach($cartlist as $key=>$val){
+    }
 
-					   if($key==$ShopId){
+    public function userlogin()
+    {
+        $username = safe_replace($this->segment(4));
+        $password = md5(base64_decode(safe_replace($this->segment(5))));
+        $logintype = '';
+        if (strpos($username, '@') == false) {
+            $logintype = 'mobile';//手机
+        } else {
+            $logintype = 'email';//邮箱
+        }
+        $member = $this->db->GetOne("select * from `@#_member` where `$logintype`='$username' and `password`='$password'");
+        $mem = $this->db->GetOne("select * from `@#_member` where `$logintype`='$username'");
+        if (!$mem) {
+            //帐号不存在错误
+            $user['state'] = 1;
+            $user['num'] = -2;
+            echo json_encode($user);
+            die;
+        }
+        if ($member[$logintype . 'code'] != 1) {
+            $user['state'] = 2; //未验证
+            echo json_encode($user);
+            die;
+        }
+        if (!$member) {
+            //帐号或密码错误
+            $user['state'] = 1;
+            $user['num'] = -1;
+        } else {
+            //登录成功
+            _setcookie("uid", _encrypt($member['uid']), 60 * 60 * 24 * 7);
+            _setcookie("ushell", _encrypt(md5($member['uid'] . $member['password'] . $member['mobile'] . $member['email'])), 60 * 60 * 24 * 7);
+            $user['state'] = 0;
+        }
+        echo json_encode($user);
 
-					     $cart['code']=0;
+    }
 
-						    _setcookie('Cartlist_jf','','');
 
-						}else{
+    //登录成功后
 
-					     $cart['code']=1;
+    public function loginok()
+    {
 
-					   }
 
-					 }
+        $user['Code'] = 0;
 
+        echo json_encode($user);
 
+    }
 
-				  }else{
+    /***********************************注册*********************************/
 
-					   foreach($cartlist as $key=>$val){
 
-							if($key==$ShopId){
+    //检测用户是否已注册
 
-							  $cart['code']=0;
+    public function checkname()
+    {
 
-							}else{
+        $config_email = System::load_sys_config("email");
 
-							  $Mcartlist[$key]['num']=$val['num'];
+        $config_mobile = System::load_sys_config("mobile");
 
-							}
+        $name = $this->segment(4);
 
-						}
+        $regtype = null;
 
+        if (_checkmobile($name)) {
 
+            $regtype = 'mobile';
 
-						   _setcookie('Cartlist_jf',json_encode($Mcartlist),'');
+            $cfg_mobile_type = 'cfg_mobile_' . $config_mobile['cfg_mobile_on'];
 
+            $config_mobile = $config_mobile[$cfg_mobile_type];
 
+            if (empty($config_mobile['mid']) && empty($config_email['mpass'])) {
 
-					}
 
+                $user['state'] = 2;//_message("系统短息配置不正确!");
 
+                echo json_encode($user);
 
-				}else{
+                exit;
 
-				   $cart['code']=1;   //删除失败
+            }
 
-				}
+        }
 
+        $member = $this->db->GetOne("SELECT * FROM `@#_member` WHERE `mobile` = '$name' LIMIT 1");
 
+        if (is_array($member)) {
 
-		}
+            if ($member['mobilecode'] == 1 || $member['emailcode'] == 1) {
 
-		echo json_encode($cart);
+                $user['state'] = 1;//_message("该账号已被注册");
 
-	}
+            } else {
 
-	public function getCodeState(){
+                $sql = "DELETE from`@#_member` WHERE `mobile` = '$name'";
 
-	  $itemid=safe_replace($this->segment(4));
+                $this->db->Query($sql);
 
-	  $item=$mysql_model->GetOne("select * from `@#_shoplist` where `id`='".$itemid."' LIMIT 1");
+                $user['state'] = 0;
 
+            }
 
+        } else {
 
-	  $a['Code']=1;
+            $user['state'] = 0;//表示数据库里没有该帐号
 
-	  if(!$item){
+        }
 
-	     $a['Code']=0;
 
-	  }
+        echo json_encode($user);
 
+    }
 
 
-	 echo json_encode($a);
+    //将数据注册到数据库
 
-	}
+    public function userMobile()
+    {
 
-	public function userlogin(){
-	    $username=safe_replace($this->segment(4));
-	    $password=md5(base64_decode(safe_replace($this->segment(5))));
-		$logintype='';
-		if(strpos($username,'@')==false){
-			$logintype='mobile';//手机
-		}else{
-			$logintype='email';//邮箱
-		}
-		$member=$this->db->GetOne("select * from `@#_member` where `$logintype`='$username' and `password`='$password'");
-		$mem = $this->db->GetOne("select * from `@#_member` where `$logintype`='$username'");
-		if(!$mem){
-			//帐号不存在错误
-			$user['state']=1;
-			$user['num']=-2;
-			echo json_encode($user);die;
-		}
-		if($member[$logintype.'code'] != 1){
-			$user['state']=2; //未验证
-			echo json_encode($user);die;
-		}
-		if(!$member){
-			//帐号或密码错误
-			$user['state']=1;
-			$user['num']=-1;
-		}else{
-		   //登录成功
-			_setcookie("uid",_encrypt($member['uid']),60*60*24*7);
-			_setcookie("ushell",_encrypt(md5($member['uid'].$member['password'].$member['mobile'].$member['email'])),60*60*24*7);
-			$user['state']=0;
-		}
-		echo json_encode($user);
+        $name = isset($_GET['username']) ? $_GET['username'] : $this->segment(4);
 
-	}
+        $pass = isset($_GET['password']) ? md5($_GET['password']) : md5(base64_decode($this->segment(5)));
 
+        $time = time();
 
+        $code = abs(intval(_encrypt(_getcookie("code"), 'DECODE')));
 
-	//登录成功后
+        if ($code > 0) {
 
-	public function loginok(){
+            $decode = $code;
 
+        } else {
 
+            $decode = 0;
 
-	  $user['Code']=0;
+        }
 
-	  echo json_encode($user);
+        //邮箱验证 -1 代表未验证， 1 验证成功 都不等代表等待验证
 
-	}
+        $sql = "INSERT INTO `@#_member`(`mobile`,password,img,emailcode,mobilecode,yaoqing,time)VALUES('$name','$pass','photo/member.jpg','-1','-1','$decode','$time')";
 
-	/***********************************注册*********************************/
+        if (!$name || $this->db->Query($sql)) {
 
+            //header("location:".WEB_PATH."/mobile/user/".$regtype."check"."/"._encrypt($name));
 
+            //exit;
 
-	//检测用户是否已注册
+            $userMobile['state'] = 0;
 
-	public function checkname(){
+        } else {
 
-	    $config_email = System::load_sys_config("email");
+            //_message("注册失败！");
 
-		$config_mobile = System::load_sys_config("mobile");
+            $userMobile['state'] = 1;
 
-		$name= $this->segment(4);
+        }
 
-		$regtype=null;
+        echo json_encode($userMobile);
 
-		if(_checkmobile($name)){
+    }
 
-			$regtype='mobile';
 
-			$cfg_mobile_type  = 'cfg_mobile_'.$config_mobile['cfg_mobile_on'];
+    //验证输入的手机验证码
 
-			$config_mobile = $config_mobile[$cfg_mobile_type];
+    public function mobileregsn()
+    {
 
-			if(empty($config_mobile['mid']) && empty($config_email['mpass'])){
+        $mobile = $this->segment(4);
 
+        $checkcodes = $this->segment(5);
 
 
-				 $user['state']=2;//_message("系统短息配置不正确!");
+        $member = $this->db->GetOne("SELECT * FROM `@#_member` WHERE `mobile` = '$mobile' LIMIT 1");
 
-				 echo json_encode($user);
 
-				 exit;
+        if (strlen($checkcodes) != 6) {
 
-			}
+            //_message("验证码输入不正确!");
 
-		}
+            $mobileregsn['state'] = 1;
 
-		$member=$this->db->GetOne("SELECT * FROM `@#_member` WHERE `mobile` = '$name' LIMIT 1");
+            echo json_encode($mobileregsn);
 
-		if(is_array($member)){
+            exit;
 
-			if($member['mobilecode']==1 || $member['emailcode']==1){
+        }
 
-			  $user['state']=1;//_message("该账号已被注册");
+        $usercode = explode("|", $member['mobilecode']);
 
-			}else{
+        if ($checkcodes != $usercode[0]) {
 
-			  $sql="DELETE from`@#_member` WHERE `mobile` = '$name'";
+            //_message("验证码输入不正确!");
 
-			  $this->db->Query($sql);
+            $mobileregsn['state'] = 1;
 
-			  $user['state']=0;
+            echo json_encode($mobileregsn);
 
-			}
+            exit;
 
-		}else{
+        }
 
-		    $user['state']=0;//表示数据库里没有该帐号
 
-		}
+        $this->db->Query("UPDATE `@#_member` SET mobilecode='1' where `uid`='$member[uid]'");
 
 
+        _setcookie("uid", _encrypt($member['uid']), 60 * 60 * 24 * 7);
 
-	    echo json_encode($user);
+        _setcookie("ushell", _encrypt(md5($member['uid'] . $member['password'] . $member['mobile'] . $member['email'])), 60 * 60 * 24 * 7);
 
-	}
 
+        $mobileregsn['state'] = 0;
 
+        $mobileregsn['str'] = 1;
 
-	//将数据注册到数据库
 
-	public function userMobile(){
+        echo json_encode($mobileregsn);
 
-		$name= isset($_GET['username'])? $_GET['username']: $this->segment(4);
+    }
 
-		$pass= isset($_GET['password'])? md5($_GET['password']): md5(base64_decode($this->segment(5)));
 
-		$time=time();
+    //重新发送验证码
 
-		$code=abs(intval(_encrypt(_getcookie("code"),'DECODE')));
+    public function sendmobile()
+    {
 
-		if($code>0){
 
-			$decode = $code;
+        $name = $this->segment(4);
 
-		}else{
+        $member = $this->db->GetOne("SELECT * FROM `@#_member` WHERE `mobile` = '$name' LIMIT 1");
 
-			$decode = 0;
+        if (!$member) {
 
-		}
+            //_message("参数不正确!");
 
-		//邮箱验证 -1 代表未验证， 1 验证成功 都不等代表等待验证
+            $sendmobile['state'] = 1;
 
-		$sql="INSERT INTO `@#_member`(`mobile`,password,img,emailcode,mobilecode,yaoqing,time)VALUES('$name','$pass','photo/member.jpg','-1','-1','$decode','$time')";
+            echo json_encode($sendmobile);
 
-		if(!$name || $this->db->Query($sql)){
+            exit;
 
-			//header("location:".WEB_PATH."/mobile/user/".$regtype."check"."/"._encrypt($name));
+        }
 
-			//exit;
+        $checkcode = explode("|", $member['mobilecode']);
 
-			$userMobile['state']=0;
+        $times = time() - $checkcode[1];
 
-		}else{
+        if ($times > 120) {
 
-			//_message("注册失败！");
 
-			$userMobile['state']=1;
+            $sendok = send_mobile_reg_code($name, $member['uid']);
 
-		}
+            if ($sendok[0] != 1) {
 
-	  echo json_encode($userMobile);
+                //_message($sendok[1]);exit;
 
-	}
+                $sendmobile['state'] = 1;
 
+                echo json_encode($sendmobile);
 
+                exit;
 
-	//验证输入的手机验证码
+            }
 
-	public function mobileregsn(){
+            //成功
 
-	    $mobile= $this->segment(4);
+            $sendmobile['state'] = 0;
 
-	    $checkcodes= $this->segment(5);
+            echo json_encode($sendmobile);
 
+            exit;
 
+        } else {
 
-		$member=$this->db->GetOne("SELECT * FROM `@#_member` WHERE `mobile` = '$mobile' LIMIT 1");
+            $sendmobile['state'] = 1;
 
+            echo json_encode($sendmobile);
 
+            exit;
 
-			if(strlen($checkcodes)!=6){
+        }
 
-			    //_message("验证码输入不正确!");
 
-				$mobileregsn['state']=1;
+    }
 
-				echo json_encode($mobileregsn);
+    //最新揭晓
 
-				exit;
+    public function getLotteryList()
+    {
 
-			}
+        $FIdx = $this->segment(4);
 
-			$usercode=explode("|",$member['mobilecode']);
+        $EIdx = 10;//$this->segment(5);
 
-			if($checkcodes!=$usercode[0]){
+        $isCount = $this->segment(6);
 
-			   //_message("验证码输入不正确!");
+        $allGoods = rpc_mall_getAllRecentFinishGoods($FIdx, $EIdx);
 
-				$mobileregsn['state']=1;
+//        $shopsum = $this->db->GetOne("SELECT count(*) AS total FROM `@#_shoplist` WHERE `q_uid` is not null AND `q_showtime` = 'N'");
 
-				echo json_encode($mobileregsn);
+        $shopsum = count($allGoods);
 
-				exit;
+//        \hellaEngine\support\dump($allGoods);
 
-			}
+        //最新揭晓
 
+//        $shoplist['listItems'] = $this->db->GetList("SELECT * FROM `@#_shoplist` WHERE `q_uid` is not null AND `q_showtime` = 'N' ORDER BY `q_end_time` DESC limit $FIdx,$EIdx");
+        $shoplist['listItems'] = $allGoods;
 
+        if (empty($shoplist['listItems'])) {
 
+            $shoplist['code'] = 1;
 
+        } else {
 
-			$this->db->Query("UPDATE `@#_member` SET mobilecode='1' where `uid`='$member[uid]'");
+            foreach ($shoplist['listItems'] as $key => $val) {
 
+                //查询出购买次数
 
+//                $recodeinfo = $this->db->GetOne("select `gonumber` from `@#_member_go_record` where `uid` ='$val[q_uid]'  and `shopid`='$val[id]' ");
 
-			_setcookie("uid",_encrypt($member['uid']),60*60*24*7);
+                //echo "select `gonumber` from `@#_member_go_record` where `uid` !='$val[q_uid]'  and `shopid`='$val[id]' ";
 
-			_setcookie("ushell",_encrypt(md5($member['uid'].$member['password'].$member['mobile'].$member['email'])),60*60*24*7);
+//                $shoplist['listItems'][$key]['q_user'] = get_user_name($val['q_uid']);
+//
+//                $shoplist['listItems'][$key]['userphoto'] = get_user_key($val['q_uid'], 'img');
+//
+//                $shoplist['listItems'][$key]['userphotow'] = get_user_key($val['q_uid'], 'headimg');
+//
+                $shoplist['listItems'][$key]['q_end_time_str'] = microt($shoplist['listItems'][$key]['q_end_time']);
+//                $shoplist['listItems'][$key]['q_end_time'] = microt($val['q_end_time']);
+//
+//                $shoplist['listItems'][$key]['gonumber'] = $recodeinfo['gonumber'];
+            }
+        }
 
+        $shoplist['code'] = 0;
+        $shoplist['count'] = $shopsum;
 
+//        }
 
-			 $mobileregsn['state']=0;
 
-			 $mobileregsn['str']=1;
+        echo json_encode($shoplist);
 
 
+    }
 
-	        echo json_encode($mobileregsn);
 
-	}
+    //访问他人购买记录
 
+    public function getUserBuyList()
+    {
 
+        $type = $this->segment(4);
 
-	//重新发送验证码
+        $uid = $this->segment(5);
 
-	public function sendmobile(){
+        $FIdx = $this->segment(6);
 
+        $EIdx = 10;//$this->segment(7);
 
+        $isCount = $this->segment(8);
 
-	  		$name=$this->segment(4);
 
-			$member=$this->db->GetOne("SELECT * FROM `@#_member` WHERE `mobile` = '$name' LIMIT 1");
+        if ($type == 0) {
 
-			if(!$member){
+            //参与云购的商品 全部...
 
-			    //_message("参数不正确!");
+            $shoplist = $this->db->GetList("select *,sum(gonumber) as gonumber from `@#_member_go_record` a left join `@#_shoplist` b on a.shopid=b.id where a.uid='$uid' GROUP BY shopid ");
 
-				$sendmobile['state']=1;
 
-				echo json_encode($sendmobile);
+            $shop['listItems'] = $this->db->GetList("select *,sum(gonumber) as gonumber from `@#_member_go_record` a left join `@#_shoplist` b on a.shopid=b.id where a.uid='$uid' GROUP BY shopid order by a.time desc limit $FIdx,$EIdx ");
 
-				exit;
+        } elseif ($type == 1) {
 
-		    }
+            //获得奖品
 
-			$checkcode=explode("|",$member['mobilecode']);
+            $shoplist = $this->db->GetList("select * from  `@#_shoplist`  where q_uid='$uid' ");
 
-			$times=time()-$checkcode[1];
 
-			if($times > 120){
+            $shop['listItems'] = $this->db->GetList("select * from  `@#_shoplist`  where q_uid='$uid' order by q_end_time desc limit $FIdx,$EIdx");
 
+        } elseif ($type == 2) {
 
+            //晒单记录
 
-				$sendok = send_mobile_reg_code($name,$member['uid']);
+            $shoplist = $this->db->GetList("select * from `@#_shaidan` a left join `@#_shoplist` b on a.sd_shopid=b.id where a.sd_userid='$uid' ");
 
-				if($sendok[0]!=1){
 
-					//_message($sendok[1]);exit;
+            $shop['listItems'] = $this->db->GetList("select * from `@#_shaidan` a left join `@#_shoplist` b on a.sd_shopid=b.id where a.sd_userid='$uid' order by a.sd_time desc limit $FIdx,$EIdx");
 
-                   	$sendmobile['state']=1;
 
-					echo json_encode($sendmobile);
+        }
 
-					exit;
 
-				}
+        if (empty($shop['listItems'])) {
 
-				//成功
+            $shop['code'] = 4;
 
-				    $sendmobile['state']=0;
 
-					echo json_encode($sendmobile);
+        } else {
 
-					exit;
+            foreach ($shop['listItems'] as $key => $val) {
 
-			}else{
+                if ($val['q_end_time'] != '') {
 
-				    $sendmobile['state']=1;
+                    $shop['listItems'][$key]['codeState'] = 3;
 
-					echo json_encode($sendmobile);
+                    $shop['listItems'][$key]['q_user'] = get_user_name($val['q_uid']);
 
-					exit;
+                    $shop['listItems'][$key]['q_end_time'] = microt($val['q_end_time']);
 
-			}
 
+                }
 
+                if (isset($val['sd_time'])) {
 
-	}
+                    $shop['listItems'][$key]['sd_time'] = date('m月d日 H:i', $val['sd_time']);
 
-	//最新揭晓
+                }
 
-	public function getLotteryList(){
+            }
 
-	   $FIdx=$this->segment(4);
+            $shop['code'] = 0;
 
-	   $EIdx=10;//$this->segment(5);
+            $shop['count'] = count($shoplist);
 
-	   $isCount=$this->segment(6);
+        }
 
+        echo json_encode($shop);
 
+    }
 
-	   $shopsum=$this->db->GetOne("SELECT count(*) AS total FROM `@#_shoplist` WHERE `q_uid` is not null AND `q_showtime` = 'N'");
 
+    //查看计算结果
 
+    public function getCalResult()
+    {
 
-	   //最新揭晓
+        $itemid = $this->segment(4);
 
-		$shoplist['listItems']=$this->db->GetList("SELECT * FROM `@#_shoplist` WHERE `q_uid` is not null AND `q_showtime` = 'N' ORDER BY `q_end_time` DESC limit $FIdx,$EIdx");
+        $curtime = time();
 
+        $item = rpc_mall_getGoodsInfo($itemid);
 
+//        $item = $this->db->GetOne("select * from `@#_shoplist` where `id`='$itemid' and `q_end_time` is not null LIMIT 1");
 
-		if(empty($shoplist['listItems'])){
 
-		  $shoplist['code']=1;
+        if ($item['q_content']) {
 
-		}else{
+            $item['contcode'] = 0;
 
-		 foreach($shoplist['listItems'] as $key=>$val){
+            $item['itemlist'] = unserialize($item['q_content']);
 
-		 //查询出购买次数
 
-		   $recodeinfo=$this->db->GetOne("select `gonumber` from `@#_member_go_record` where `uid` ='$val[q_uid]'  and `shopid`='$val[id]' ");
+            foreach ($item['itemlist'] as $key => $val) {
 
-		   //echo "select `gonumber` from `@#_member_go_record` where `uid` !='$val[q_uid]'  and `shopid`='$val[id]' ";
+                $item['itemlist'][$key]['time'] = microt($val['time']);
 
-		   $shoplist['listItems'][$key]['q_user']=get_user_name($val['q_uid']);
+                $h = date("H", $val['time']);
 
-		   $shoplist['listItems'][$key]['userphoto']=get_user_key($val['q_uid'],'img');
+                $i = date("i", $val['time']);
 
-		   $shoplist['listItems'][$key]['userphotow']=get_user_key($val['q_uid'],'headimg');
+                $s = date("s", $val['time']);
 
-		   $shoplist['listItems'][$key]['q_end_time']=microt($val['q_end_time']);
+                list($timesss, $msss) = explode(".", $val['time']);
 
-		   $shoplist['listItems'][$key]['gonumber']=$recodeinfo['gonumber'];
 
-		 }
+                $item['itemlist'][$key]['timecode'] = $h . $i . $s . $msss;
 
-		  $shoplist['code']=0;
-		  $shoplist['count']=$shopsum['total'];
+            }
 
-		}
 
+        } else {
 
+            $item['contcode'] = 1;
 
-		echo json_encode($shoplist);
+        }
 
 
+        if (!empty($item)) {
 
-	}
+            $item['code'] = 0;
 
 
+        } else {
 
-	//访问他人购买记录
+            $item['code'] = 1;
 
-	public function getUserBuyList(){
+        }
 
-	   $type=$this->segment(4);
 
-	   $uid=$this->segment(5);
+        //echo "<pre>";
 
-	   $FIdx=$this->segment(6);
+        //print_r($item);
 
-	   $EIdx=10;//$this->segment(7);
+        //print_r($record_time);
 
-	   $isCount=$this->segment(8);
+        \hellaEngine\support\dump($item);
+        echo json_encode($item);
 
 
+    }
 
-		 if($type==0){
 
-          //参与云购的商品 全部...
+    //付款
 
-		  $shoplist=$this->db->GetList("select *,sum(gonumber) as gonumber from `@#_member_go_record` a left join `@#_shoplist` b on a.shopid=b.id where a.uid='$uid' GROUP BY shopid ");
+    public function UserPay()
+    {
 
 
+    }
 
-		  $shop['listItems']=$this->db->GetList("select *,sum(gonumber) as gonumber from `@#_member_go_record` a left join `@#_shoplist` b on a.shopid=b.id where a.uid='$uid' GROUP BY shopid order by a.time desc limit $FIdx,$EIdx " );
 
-		 }elseif($type==1){
+    // 马上揭晓的商品
 
-		   //获得奖品
+    public function GetStartRaffleAllList()
+    {
 
-		    $shoplist=$this->db->GetList("select * from  `@#_shoplist`  where q_uid='$uid' " );
+        $maxSeconds = intval($this->segment(4));
 
 
+        $result = array();
 
-		    $shop['listItems']=$this->db->GetList("select * from  `@#_shoplist`  where q_uid='$uid' order by q_end_time desc limit $FIdx,$EIdx" );
+        $result['errorCode'] = 0;
 
-		 }elseif($type==2){
+        $result['maxSeconds'] = $maxSeconds;
 
-		   //晒单记录
+        $result['listItems'] = array();
 
-		    $shoplist=$this->db->GetList("select * from `@#_shaidan` a left join `@#_shoplist` b on a.sd_shopid=b.id where a.sd_userid='$uid' " );
 
+        $times = (int)System::load_sys_config('system', 'goods_end_time');
 
+        $time = time();
 
-		    $shop['listItems']=$this->db->GetList("select * from `@#_shaidan` a left join `@#_shoplist` b on a.sd_shopid=b.id where a.sd_userid='$uid' order by a.sd_time desc limit $FIdx,$EIdx" );
+        $list = $this->db->getlist("select qishu,xsjx_time,id,thumb,title,q_uid,q_user,q_end_time,money from `@#_shoplist` where `q_showtime` = 'Y' AND id > '$maxSeconds' order by `q_end_time` DESC");
 
+        foreach ($list as $item) {
 
+            if ($result['maxSeconds'] == $maxSeconds) {
 
-		 }
+                $result['maxSeconds'] = $item['id'];
 
+            }
 
 
-		 if(empty($shop['listItems'])){
+            if ($item['xsjx_time']) {
 
-		   $shop['code']=4;
+                $item['q_end_time'] += $times;
 
+            }
 
 
-		 }else{
+            $data = array();
 
-		   foreach($shop['listItems'] as $key=>$val){
+            $data['id'] = $item['id'];
 
-		      if($val['q_end_time']!=''){
+            $data['qishu'] = $item['qishu'];
 
-			    $shop['listItems'][$key]['codeState']=3;
+            $data['title'] = $item['title'];
 
-			    $shop['listItems'][$key]['q_user']=get_user_name($val['q_uid']);
+            $data['money'] = $item['money'];
 
-                $shop['listItems'][$key]['q_end_time']=microt($val['q_end_time']);
+            $data['thumb'] = $item['thumb'];
 
+            $data['seconds'] = intval($item['q_end_time'] - $time);
 
+            $result['listItems'][] = $data;
 
-			  }
+        }
 
-			  if(isset($val['sd_time'])){
 
-			   $shop['listItems'][$key]['sd_time']=date('m月d日 H:i',$val['sd_time']);
+        die(json_encode($result));
 
-			  }
+    }
 
-		   }
+    public function BarcodernoInfo()
+    {
+        $itemid = intval($this->segment(4));
+        $res = $this->db->Query("UPDATE `@#_shoplist` SET `q_showtime`='N' where `id`= $itemid");
+        $list = $this->db->GetOne("SELECT * FROM `@#_shoplist` WHERE `id`= $itemid");
+        $num = $this->db->GetOne("SELECT `gonumber` FROM `@#_member_go_record` WHERE `uid` ='$list[q_uid]'  AND `shopid`='$list[id]'");
+        $lists = $this->db->GetOne("SELECT * FROM `@#_member` WHERE `uid`='$list[q_uid]'");
+        $result = array();
+        if ($res > 0) {
+            $result['code'] = 0;
+            $result['codeType'] = 0;
+            $result['buyCount'] = $num['gonumber'];
+            $result['thumb'] = $list['thumb'];
+            $result['codeRNO'] = $list['q_user_code'];
+            $result['codeRTime'] = microt($list['q_end_time']);
+            $result['img'] = $lists['img'];
+            $result['headimg'] = $lists['headimg'];
+            $result['user'] = $lists['username'];
+            die(json_encode($result));
+        }
+    }
 
-		   $shop['code']=0;
 
-		   $shop['count']=count($shoplist);
+    public function paywx()
+    {
 
-		 }
+        // ini_set('display_errors', 1);
 
-	   echo json_encode($shop);
+        // error_reporting(E_ALL);
 
-	}
 
+        $tradeno = $this->segment(4);
 
+        if (empty($tradeno)) {
 
-	 //查看计算结果
+            _message("订单不存在!");
 
-	 public function getCalResult(){
+        }
 
-	     $itemid=$this->segment(4);
+        $pay = System::load_app_class('pay', 'pay');
 
-		 $curtime=time();
+        $pay->go_pay_wx($tradeno);
 
+        exit;
 
-
-		 $item=$this->db->GetOne("select * from `@#_shoplist` where `id`='$itemid' and `q_end_time` is not null LIMIT 1");
-
-
-
-		if($item['q_content']){
-
-		    $item['contcode']=0;
-
-			$item['itemlist'] = unserialize($item['q_content']);
-
-
-
-			foreach($item['itemlist'] as $key=>$val){
-
-			  	$item['itemlist'][$key]['time']	=microt($val['time']);
-
-				$h=date("H",$val['time']);
-
-			    $i=date("i",$val['time']);
-
-			    $s=date("s",$val['time']);
-
-			    list($timesss,$msss) = explode(".",$val['time']);
-
-
-
-				$item['itemlist'][$key]['timecode']=$h.$i.$s.$msss;
-
-			}
-
-
-
-		}else{
-
-		    $item['contcode']=1;
-
-		}
-
-
-
-		if(!empty($item)){
-
-		  $item['code']=0;
-
-
-
-		}else{
-
-		  $item['code']=1;
-
-		}
-
-
-
-    //echo "<pre>";
-
-	//print_r($item);
-
-	//print_r($record_time);
-
-	   echo json_encode($item);
-
-
-
-
-
-	 }
-
-
-
-
-
-	 //付款
-
-	public function UserPay(){
-
-
-
-
-
-	}
-
-
-
-	// 马上揭晓的商品
-
-	public function GetStartRaffleAllList(){
-
-		$maxSeconds = intval($this->segment(4));
-
-
-
-		$result = array();
-
-		$result['errorCode'] = 0;
-
-		$result['maxSeconds'] = $maxSeconds;
-
-		$result['listItems'] = array();
-
-
-
-		$times = (int)System::load_sys_config('system','goods_end_time');
-
-		$time = time();
-
-		$list = $this->db->getlist("select qishu,xsjx_time,id,thumb,title,q_uid,q_user,q_end_time,money from `@#_shoplist` where `q_showtime` = 'Y' AND id > '$maxSeconds' order by `q_end_time` DESC");
-
-		foreach($list as $item) {
-
-			if ( $result['maxSeconds'] == $maxSeconds ) {
-
-				$result['maxSeconds'] = $item['id'];
-
-			}
-
-
-
-			if($item['xsjx_time']){
-
-				$item['q_end_time'] += $times;
-
-			}
-
-
-
-			$data = array();
-
-			$data['id'] = $item['id'];
-
-			$data['qishu'] = $item['qishu'];
-
-			$data['title'] = $item['title'];
-
-			$data['money'] = $item['money'];
-
-			$data['thumb'] = $item['thumb'];
-
-			$data['seconds'] = intval($item['q_end_time'] - $time);
-
-			$result['listItems'][] = $data;
-
-		}
-
-
-
-
-
-		die(json_encode($result));
-
-	}
-
-	public function BarcodernoInfo(){
-		$itemid = intval($this->segment(4));
-		$res = $this->db->Query("UPDATE `@#_shoplist` SET `q_showtime`='N' where `id`= $itemid");
-		$list = $this->db->GetOne("SELECT * FROM `@#_shoplist` WHERE `id`= $itemid");
-		$num=$this->db->GetOne("SELECT `gonumber` FROM `@#_member_go_record` WHERE `uid` ='$list[q_uid]'  AND `shopid`='$list[id]'");
-		$lists = $this->db->GetOne("SELECT * FROM `@#_member` WHERE `uid`='$list[q_uid]'");
-		$result = array();
-		if($res>0){
-			$result['code'] = 0;
-			$result['codeType']=0;
-			$result['buyCount']=$num['gonumber'];
-			$result['thumb']=$list['thumb'];
-			$result['codeRNO'] = $list['q_user_code'];
-			$result['codeRTime'] = microt($list['q_end_time']);
-			$result['img'] =$lists['img'];
-			$result['headimg'] =$lists['headimg'];
-			$result['user'] =$lists['username'];
-			die(json_encode($result));
-		}
-	}
-
-
-	public function paywx(){
-
-		// ini_set('display_errors', 1);
-
-		// error_reporting(E_ALL);
-
-
-
-		$tradeno = $this->segment(4);
-
-		if(empty($tradeno)){
-
-			_message("订单不存在!");
-
-		}
-
-		$pay=System::load_app_class('pay','pay');
-
-		$pay->go_pay_wx($tradeno);
-
-		exit;
-
-	}
-
-
-
+    }
 
 
 }
-
 
 
 ?>

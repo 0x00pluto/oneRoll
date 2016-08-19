@@ -9,11 +9,11 @@ function CastMoney(a) {
     }
     return a
 }
-String.prototype.rExp = function(b, a) {
+String.prototype.rExp = function (b, a) {
     var c = new RegExp(b, "g");
     return this.replace(c, a)
 };
-String.prototype.toHTML = function(a) {
+String.prototype.toHTML = function (a) {
     var b = String(this);
     if (a) {
         b = b.substring(0, a)
@@ -28,7 +28,7 @@ String.prototype.toHTML = function(a) {
     b = b.rExp("\r", "<br/>");
     return b
 };
-$.cookie = function(b, j, m) {
+$.cookie = function (b, j, m) {
     if (typeof j != "undefined") {
         m = m || {};
         if (j === null) {
@@ -48,7 +48,7 @@ $.cookie = function(b, j, m) {
         }
         var l = m.path ? "; path=" + (m.path) : "";
         var g = m.domain ? "; domain=" + (m.domain) : "";
-        var a = m.secure ? "; secure": "";
+        var a = m.secure ? "; secure" : "";
         document.cookie = [b, "=", encodeURIComponent(j), e, l, g, a].join("")
     } else {
         var d = null;

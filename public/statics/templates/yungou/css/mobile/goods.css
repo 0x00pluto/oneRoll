@@ -395,7 +395,7 @@
     display: block;
     color: #555;
     line-height: 25px;
-    height: 45px;
+    height: 25px;
     overflow: hidden;
     text-align: left;
     font-size: 14px;
@@ -431,7 +431,7 @@
     line-height: 40px;
     background-color: #2af;
     border-radius: 50px;
-    
+
 }
 .goodsList .goodsListR a.add i{
     display: block;
@@ -805,13 +805,13 @@
     transform: rotate(45deg);
 -o-transform: rotate(45deg);
 -webkit-transform: rotate(45deg);
--moz-transform: rotate(45deg); 
+-moz-transform: rotate(45deg);
 }
 .joinAndGet dl a .jilu{
 transform: rotate(135deg);
 -o-transform: rotate(135deg);
 -webkit-transform: rotate(135deg);
--moz-transform: rotate(135deg); 
+-moz-transform: rotate(135deg);
 }
 .joinAndGet dl a em {
     color: #C0C0C0;
@@ -1381,8 +1381,17 @@ transform: rotate(135deg);
 	background: #f60;
 	line-height: 42px;
     font-size: 16px;
+    float: right;
+    width: 40%;
+}
+.pOngoing .jiexiaoDesc{
+    border-radius: 3px;
+    /*background: #f60;*/
+    line-height: 42px;
+    font-size: 16px;
+    color: #C1C1C1;
     float: left;
-    width: 85%;
+    width: 60%;
 }
 .pOngoing em {
     margin: 0 3px;

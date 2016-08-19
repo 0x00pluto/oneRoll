@@ -23,10 +23,12 @@ class shopItemAdapter extends arrayAdapter
         'money' => "",
         "canyurenshu" => "",
         "zongrenshu" => "",
+        "shenyurenshu" => "",
         "q_user_code" => "",
         "picarr" => "",
-        'LuckRoleName'=>"",
-        "LuckRoleHeadIconURL"=>""
+        'LuckUserId' => "",
+        'LuckRoleName' => "",
+        "LuckRoleHeadIconURL" => ""
     ];
 
 
@@ -68,7 +70,7 @@ class shopItemAdapter extends arrayAdapter
 //        \hellaEngine\support\dump([
 //            $this->data['mallGoodsData']['goodsPeriod'],
 //            ]);
-        return intval($this->data['mallGoodsData']['goodsPeriod']) +1;
+        return intval($this->data['mallGoodsData']['goodsPeriod']) + 1 +10000000;
     }
 
     public function getMoneyAttribute()
@@ -103,12 +105,31 @@ class shopItemAdapter extends arrayAdapter
             return null;
         }
     }
+
     public function getLuckRoleHeadIconURLAttribute()
     {
         if ($this->data['mallGoodsData']['status'] == 2) {
-            return $this->data['mallGoodsData']['goodsRollResult']['luckUserInfo']['headiconurl'];
+            $url = $this->data['mallGoodsData']['goodsRollResult']['luckUserInfo']['headiconurl'];
+            if (empty($url)) {
+                return "photo/member.jpg";
+            }
+            return $url;
         } else {
             return "photo/member.jpg";
         }
+    }
+
+    public function getLuckUserIdAttribute()
+    {
+        if ($this->data['mallGoodsData']['status'] == 2) {
+            return $this->data['mallGoodsData']['goodsRollResult']['luckUserId'];
+        } else {
+            return "-1";
+        }
+    }
+
+    public function getShenyurenshuAttribute()
+    {
+        return $this['zongrenshu'] - $this['canyurenshu'];
     }
 }

@@ -228,6 +228,6 @@ $(function() {
 
     };
 
-    Base.getScript(Gobal.Skin + "/JS/comm.js?v=130826", k)
+    Base.getScript(Gobal.Skin + "/JS/Comm.js?v=130826", k)
 
 });

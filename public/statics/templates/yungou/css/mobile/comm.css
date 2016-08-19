@@ -986,7 +986,7 @@ a.z-Site {
 }
 
 .Progress-bar .Pro-bar-li li em {
-    display: block;
+    /*display: block;*/
     font-size: 10px;
     font-family: Microsoft YaHei,arial;
     height: 14px;
@@ -995,7 +995,7 @@ a.z-Site {
 }
 
 .Progress-bar .Pro-bar-li li.P-bar01 em {
-    color: #f60
+    color: #f60;
 }
 
 .Progress-bar .Pro-bar-li li.P-bar02 em {
@@ -1007,17 +1007,17 @@ a.z-Site {
 }
 
 .Progress-bar .Pro-bar-li li.P-bar01 {
-    width: 30%;
+    width: 50%;
     text-align: left;
 }
 
 .Progress-bar .Pro-bar-li li.P-bar02 {
-    width: 40%;
+    width: 10%;
     text-align: center;
 }
 
 .Progress-bar .Pro-bar-li li.P-bar03 {
-    width: 30%;
+    width: 40%;
     float: right;
     text-align: right;
 }
