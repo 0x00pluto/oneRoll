@@ -64,15 +64,20 @@ $(function () {
                         var t = r.length;
 
                         for (var q = 0; q < t; q++) {
-                            if (r[q].userphoto != 'photo/member.jpg') {
-                                var v = '<ul id="' + r[q].id + '"><li class="revConL">' + (r[q].codeType == 1 ? '<span class="z-limit-tips">限时揭晓</span>' : "") + '<img src="' + Gobal.LoadPic + '" src2="' + Gobal.imgpath + '/uploads/' + r[q].thumb + '"></li><li class="revConR"><dl><dd class="touxianga"><img name="uImg" uweb="' + r[q].LuckUserId + '" src="' + Gobal.imgpath + '/uploads/' + r[q].LuckRoleHeadIconURL + '"></dd><dd><span>获得者<strong>：</strong><a name="uName" uweb="' + r[q].LuckUserId + '" class="rUserName blue">' + r[q].LuckRoleName + '</a></span>本期购买<strong>：</strong><em class="orange arial">' + r[q].zongrenshu + '</em>人次</dd></dl><dt>幸运码：<em class="orange arial">' + r[q].q_user_code + '</em><br/>揭晓时间：<em class="c9 arial">' + r[q].q_end_time_str + '</em></dt><b class="fr z-arrow"></b></li></ul>';
-                            } else if (r[q].userphotow != '') {
-                                var v = '<ul id="' + r[q].id + '"><li class="revConL">' + (r[q].codeType == 1 ? '<span class="z-limit-tips">限时揭晓</span>' : "") + '<img src="' + Gobal.LoadPic + '" src2="' + Gobal.imgpath + '/uploads/' + r[q].thumb + '"></li><li class="revConR"><dl><dd class="touxianga"><img name="uImg" uweb="' + r[q].LuckUserId + '" src="' + r[q].LuckRoleHeadIconURL + '"></dd><dd><span>获得者<strong>：</strong><a name="uName" uweb="' + r[q].LuckUserId + '" class="rUserName blue">' + r[q].LuckRoleName + '</a></span>本期购买<strong>：</strong><em class="orange arial">' + r[q].zongrenshu + '</em>人次</dd></dl><dt>幸运码：<em class="orange arial">' + r[q].q_user_code + '</em><br/>揭晓时间：<em class="c9 arial">' + r[q].q_end_time_str + '</em></dt><b class="fr z-arrow"></b></li></ul>';
 
-                            } else {
-                                var v = '<ul id="' + r[q].id + '"><li class="revConL">' + (r[q].codeType == 1 ? '<span class="z-limit-tips">限时揭晓</span>' : "") + '<img src="' + Gobal.LoadPic + '" src2="' + Gobal.imgpath + '/uploads/' + r[q].thumb + '"></li><li class="revConR"><dl><dd class="touxianga"><img name="uImg" uweb="' + r[q].LuckUserId + '" src="' + Gobal.imgpath + '/uploads/' + r[q].LuckRoleHeadIconURL + '"></dd><dd><span>获得者<strong>：</strong><a name="uName" uweb="' + r[q].LuckUserId + '" class="rUserName blue">' + r[q].LuckRoleName + '</a></span>本期购买<strong>：</strong><em class="orange arial">' + r[q].zongrenshu + '</em>人次</dd></dl><dt>幸运码：<em class="orange arial">' + r[q].q_user_code + '</em><br/>揭晓时间：<em class="c9 arial">' + r[q].q_end_time_str + '</em></dt><b class="fr z-arrow"></b></li></ul>';
 
-                            }
+                            var v = '<ul id="' + r[q].id + '">' +
+                                '<li class="revConL">' + (r[q].codeType == 1 ? '<span class="z-limit-tips">限时揭晓</span>' : "") +
+                                '<img src="' + Gobal.LoadPic + '" src2="' + Gobal.imgpath + '/uploads/' + r[q].thumb + '"></li>' +
+                                '<li class="revConR">' +
+                                '<dl>' +
+                                // '<dd class="touxianga"><img name="uImg" uweb="' + r[q].LuckUserId + '" src="' + Gobal.imgpath + '/uploads/' + r[q].LuckRoleHeadIconURL + '"></dd>' +
+                                '<dd><span>获得者<strong>：</strong><a name="uName" uweb="' + r[q].LuckUserId + '" class="rUserName blue">' + r[q].LuckRoleName + '</a></span>本期购买<strong>：</strong><em class="orange arial">' + r[q].zongrenshu + '</em>人次</dd>' +
+                                '</dl>' +
+                                '<dt>幸运码：<em class="orange arial">' + r[q].q_user_code + '</em><br/>' +
+                                '揭晓时间：<em class="c9 arial">' + r[q].q_end_time_str + '000</em></dt>' +
+                                '<b class="fr z-arrow"></b></li>' +
+                                '</ul>';
                             var u = $(v);
 
                             u.click(function () {
@@ -168,19 +173,13 @@ $(function () {
 
             function (p) {
 
-                if (p.errorCode == 0) {
-
-                    o(p)
-
-                }
+                o(p);
 
                 setTimeout(k, 5000)
 
             });
 
         var o = function (q) {
-
-            g = q.maxSeconds;
 
             var p = function (t) {
 
@@ -192,7 +191,11 @@ $(function () {
 
                         e += s.id + ",";
 
-                        var u = $('<ul class="rNow rFirst" id="' + s.id + '"><li class="revConL"><img src="' + Path.path + '/statics/uploads/' + s.thumb + '"></li><li class="revConR"><h4>(第' + s.qishu + "期)" + s.title + "</h4><h5>价值：￥" + CastMoney(s.money) + '</h5><p name="pTime"><s></s>揭晓倒计时 <strong><em>00</em> : <em>00</em> : <em>0</em><em>0</em></strong></p><b class="fr z-arrow"></b></li><div class="rNowTitle">正在揭晓</div></ul>');
+                        var u = $('<ul class="rNow rFirst" id="' + s.id + '">' +
+                            '<li class="revConL"><img src="' + Path.path + '/statics/uploads/' + s.thumb + '"></li>' +
+                            '<li class="revConR"><h4>' + s.title + "</h4><h5>期号：" + s.qishu + '</h5>' +
+                            '<p name="pTime"><s></s>揭晓倒计时 <strong><em>00</em> : <em>00</em> : <em>0</em><em>0</em></strong></p><b class="fr z-arrow"></b></li>' +
+                            '<div class="rNowTitle">正在揭晓</div></ul>');
 
                         u.click(function () {
 
@@ -204,7 +207,7 @@ $(function () {
 
                         u.next().removeClass("rFirst");
 
-                        u.StartTimeOut(s.id, parseInt(s.seconds))
+                        u.StartTimeOut(s.id, parseInt(s.mallGoodsData.goodsRollResult.rollTime - (Date.parse(new Date()) / 1000)))
 
                     }
 
@@ -214,7 +217,7 @@ $(function () {
 
             if (n) {
 
-                p(q.listItems)
+                p(q)
 
             } else {
 
@@ -224,7 +227,7 @@ $(function () {
 
                         n = true;
 
-                        p(q.listItems)
+                        p(q)
 
                     })
 

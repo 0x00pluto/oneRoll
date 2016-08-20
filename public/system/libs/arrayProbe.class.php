@@ -16,10 +16,31 @@ class arrayProbe extends ArrayObject
     private $readKeys = [];
     private $writeKeys = [];
     private $existsKeys = [];
+
+
+    private $callRoute = [];
+
+
     /**
      * @var string
      */
     private $name;
+
+    /**
+     * arrayProbe constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $debug_Info = debug_backtrace();
+        foreach ($debug_Info as $value) {
+            if (isset($value['file'])) {
+                $info = $value ['file'] . ':' . $value ['line'] . " " . $value ['function'];
+                $this->callRoute[] = $info;
+            }
+        }
+    }
 
     /**
      * @return string
@@ -95,6 +116,7 @@ class arrayProbe extends ArrayObject
 
         \hellaEngine\support\dump([
             "name" => $this->name,
+            "callRoutes" => $this->callRoute,
             "readKeys" => $this->readKeys,
             "writeKeys" => $this->writeKeys,
         ]);

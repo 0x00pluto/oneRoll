@@ -1014,61 +1014,11 @@ class ajax extends base
 
         $item = rpc_mall_getGoodsInfo($itemid);
 
-//        $item = $this->db->GetOne("select * from `@#_shoplist` where `id`='$itemid' and `q_end_time` is not null LIMIT 1");
+        $result = [
+            "itemData" => $item
+        ];
 
-
-        if ($item['q_content']) {
-
-            $item['contcode'] = 0;
-
-            $item['itemlist'] = unserialize($item['q_content']);
-
-
-            foreach ($item['itemlist'] as $key => $val) {
-
-                $item['itemlist'][$key]['time'] = microt($val['time']);
-
-                $h = date("H", $val['time']);
-
-                $i = date("i", $val['time']);
-
-                $s = date("s", $val['time']);
-
-                list($timesss, $msss) = explode(".", $val['time']);
-
-
-                $item['itemlist'][$key]['timecode'] = $h . $i . $s . $msss;
-
-            }
-
-
-        } else {
-
-            $item['contcode'] = 1;
-
-        }
-
-
-        if (!empty($item)) {
-
-            $item['code'] = 0;
-
-
-        } else {
-
-            $item['code'] = 1;
-
-        }
-
-
-        //echo "<pre>";
-
-        //print_r($item);
-
-        //print_r($record_time);
-
-        \hellaEngine\support\dump($item);
-        echo json_encode($item);
+        echo json_encode($result);
 
 
     }
@@ -1091,63 +1041,16 @@ class ajax extends base
         $maxSeconds = intval($this->segment(4));
 
 
-        $result = array();
-
-        $result['errorCode'] = 0;
-
-        $result['maxSeconds'] = $maxSeconds;
-
-        $result['listItems'] = array();
+        $result = rpc_mall_getAllWaitLotteryGoods();
 
 
-        $times = (int)System::load_sys_config('system', 'goods_end_time');
-
-        $time = time();
-
-        $list = $this->db->getlist("select qishu,xsjx_time,id,thumb,title,q_uid,q_user,q_end_time,money from `@#_shoplist` where `q_showtime` = 'Y' AND id > '$maxSeconds' order by `q_end_time` DESC");
-
-        foreach ($list as $item) {
-
-            if ($result['maxSeconds'] == $maxSeconds) {
-
-                $result['maxSeconds'] = $item['id'];
-
-            }
-
-
-            if ($item['xsjx_time']) {
-
-                $item['q_end_time'] += $times;
-
-            }
-
-
-            $data = array();
-
-            $data['id'] = $item['id'];
-
-            $data['qishu'] = $item['qishu'];
-
-            $data['title'] = $item['title'];
-
-            $data['money'] = $item['money'];
-
-            $data['thumb'] = $item['thumb'];
-
-            $data['seconds'] = intval($item['q_end_time'] - $time);
-
-            $result['listItems'][] = $data;
-
-        }
-
-
-        die(json_encode($result));
+        echo json_encode($result);
 
     }
 
     public function BarcodernoInfo()
     {
-        $itemid = intval($this->segment(4));
+        $itemid = $this->segment(4);
         $res = $this->db->Query("UPDATE `@#_shoplist` SET `q_showtime`='N' where `id`= $itemid");
         $list = $this->db->GetOne("SELECT * FROM `@#_shoplist` WHERE `id`= $itemid");
         $num = $this->db->GetOne("SELECT `gonumber` FROM `@#_member_go_record` WHERE `uid` ='$list[q_uid]'  AND `shopid`='$list[id]'");
@@ -1163,7 +1066,7 @@ class ajax extends base
             $result['img'] = $lists['img'];
             $result['headimg'] = $lists['headimg'];
             $result['user'] = $lists['username'];
-            die(json_encode($result));
+            echo json_encode($result);
         }
     }
 

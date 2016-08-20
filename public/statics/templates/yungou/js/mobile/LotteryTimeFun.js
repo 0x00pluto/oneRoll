@@ -1,4 +1,4 @@
-$.fn.StartTimeOut = function(t, h) {
+$.fn.StartTimeOut = function (t, h) {
 
     var s = $(this);
 
@@ -12,7 +12,7 @@ $.fn.StartTimeOut = function(t, h) {
 
     var o = 0;
 
-    var l = function() {
+    var l = function () {
 
         var v = new Date();
 
@@ -54,7 +54,7 @@ $.fn.StartTimeOut = function(t, h) {
 
     var f = 9;
 
-    var n = function() {
+    var n = function () {
 
         f--;
 
@@ -70,7 +70,7 @@ $.fn.StartTimeOut = function(t, h) {
 
     };
 
-    var c = function() {
+    var c = function () {
 
         r.html("0");
 
@@ -78,44 +78,44 @@ $.fn.StartTimeOut = function(t, h) {
 
         var v = null;
 
-        var u = function() {
+        var u = function () {
 
             GetJPData(Path.Webpath, "/ajax/BarcodernoInfo", t,
 
-            function(w) {
+                function (w) {
 
-                if (w.code == 0) {
+                    if (w.code == 0) {
 
-                    var x = "";
+                        var x = "";
 
-                    if (w.codeType == 1) {
+                        if (w.codeType == 1) {
 
-                        x = '<span class="z-limit-tips">限时揭晓</span>'
+                            x = '<span class="z-limit-tips">限时揭晓</span>'
+
+                        }
+                        if (w.img != 'photo/member.jpg') {
+                            s.removeClass("rNow").removeClass("rFirst").html('<a href="/mobile/mobile/dataserver/' + s.id + '"></a><li class="revConL">' + x + '<img src="' + Path.path + '/statics/uploads/' + w.thumb + '"></li><li class="revConR"><dl><dd class="touxianga"><img src="' + Path.path + '/statics/uploads/' + w.img + '"></dd><dd>获得者：<em class="blue">' + w.user + '</em><br>购买：<em class="orange arial">' + w.buyCount + '</em>人次</dd></dl><dt>幸运码：<em class="orange arial">' + w.codeRNO + '</em><br>揭晓时间：<em class="c9 arial">' + w.codeRTime + '</em></dt><b class="fr z-arrow"></b></li>');
+
+                        } else if (w.headimg != '') {
+                            s.removeClass("rNow").removeClass("rFirst").html('<a href="/mobile/mobile/dataserver/' + s.id + '"></a><li class="revConL">' + x + '<img src="' + Path.path + '/statics/uploads/' + w.thumb + '"></li><li class="revConR"><dl><dd class="touxianga"><img src="' + w.headimg + '"></dd><dd>获得者：<em class="blue">' + w.user + '</em><br>购买：<em class="orange arial">' + w.buyCount + '</em>人次</dd></dl><dt>幸运码：<em class="orange arial">' + w.codeRNO + '</em><br>揭晓时间：<em class="c9 arial">' + w.codeRTime + '</em></dt><b class="fr z-arrow"></b></li>');
+
+                        } else {
+                            s.removeClass("rNow").removeClass("rFirst").html('<a href="/mobile/mobile/dataserver/' + s.id + '"></a><li class="revConL">' + x + '<img src="' + Path.path + '/statics/uploads/' + w.thumb + '"></li><li class="revConR"><dl><dd class="touxianga"><img src="' + Path.path + '/statics/uploads/' + w.img + '"></dd><dd>获得者：<em class="blue">' + w.user + '</em><br>购买：<em class="orange arial">' + w.buyCount + '</em>人次</dd></dl><dt>幸运码：<em class="orange arial">' + w.codeRNO + '</em><br>揭晓时间：<em class="c9 arial">' + w.codeRTime + '</em></dt><b class="fr z-arrow"></b></li>');
+
+                        }
+
+
+                        if (v != null) {
+
+                            clearInterval(v);
+
+                            v = null
+
+                        }
 
                     }
-                    if (w.img!='photo/member.jpg') {
-                        s.removeClass("rNow").removeClass("rFirst").html('<a href="/mobile/mobile/dataserver/'+s.id+'"></a><li class="revConL">' + x + '<img src="'+Path.path+'/statics/uploads/'+ w.thumb + '"></li><li class="revConR"><dl><dd class="touxianga"><img src="'+Path.path+'/statics/uploads/'+ w.img +'"></dd><dd>获得者：<em class="blue">' + w.user + '</em><br>购买：<em class="orange arial">' + w.buyCount + '</em>人次</dd></dl><dt>幸运码：<em class="orange arial">' + w.codeRNO + '</em><br>揭晓时间：<em class="c9 arial">' + w.codeRTime + '</em></dt><b class="fr z-arrow"></b></li>');
-                       
-                    } else if(w.headimg!=''){
-                        s.removeClass("rNow").removeClass("rFirst").html('<a href="/mobile/mobile/dataserver/'+s.id+'"></a><li class="revConL">' + x + '<img src="'+Path.path+'/statics/uploads/'+ w.thumb + '"></li><li class="revConR"><dl><dd class="touxianga"><img src="'+w.headimg+'"></dd><dd>获得者：<em class="blue">' + w.user + '</em><br>购买：<em class="orange arial">' + w.buyCount + '</em>人次</dd></dl><dt>幸运码：<em class="orange arial">' + w.codeRNO + '</em><br>揭晓时间：<em class="c9 arial">' + w.codeRTime + '</em></dt><b class="fr z-arrow"></b></li>');
 
-                    }else{
-                        s.removeClass("rNow").removeClass("rFirst").html('<a href="/mobile/mobile/dataserver/'+s.id+'"></a><li class="revConL">' + x + '<img src="'+Path.path+'/statics/uploads/'+ w.thumb + '"></li><li class="revConR"><dl><dd class="touxianga"><img src="'+Path.path+'/statics/uploads/'+ w.img +'"></dd><dd>获得者：<em class="blue">' + w.user + '</em><br>购买：<em class="orange arial">' + w.buyCount + '</em>人次</dd></dl><dt>幸运码：<em class="orange arial">' + w.codeRNO + '</em><br>揭晓时间：<em class="c9 arial">' + w.codeRTime + '</em></dt><b class="fr z-arrow"></b></li>');
-
-                    }
-
-
-                    if (v != null) {
-
-                        clearInterval(v);
-
-                        v = null
-
-                    }
-
-                }
-
-            })
+                })
 
         };
 
@@ -123,7 +123,7 @@ $.fn.StartTimeOut = function(t, h) {
 
     };
 
-    var j = function() {
+    var j = function () {
 
         o--;
 
@@ -161,9 +161,9 @@ $.fn.StartTimeOut = function(t, h) {
 
     var e = 0,
 
-    q = 0;
+        q = 0;
 
-    var i = function() {
+    var i = function () {
 
         d.html(o);
 
@@ -184,16 +184,16 @@ $.fn.StartTimeOut = function(t, h) {
         }
         b.html("12");
 
-            if (m > 10) {
-                b.html(m)
-                
-            } else {
+        if (m > 10) {
+            b.html(m)
 
-                b.html("0" + m)
+        } else {
 
-            }
+            b.html("0" + m)
 
-            q = m
+        }
+
+        q = m
 
         setTimeout(i, 100)
 

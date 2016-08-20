@@ -17,7 +17,9 @@ class sellDetailAdapter extends arrayAdapter
         'ip' => "",
         'gonumber' => "",
         'uphoto' => '',
-        'time2' => ''
+        'time2' => '',
+        "id" => "",
+        "time" => ""
     ];
 
 
@@ -48,6 +50,11 @@ class sellDetailAdapter extends arrayAdapter
     {
         return microt($this->data['selltime'] . "."
             . $this->data['rolltimeSpan'] % 1000);
+    }
+
+    public function getTimeAttribute()
+    {
+        return $this->getTime2Attribute();
     }
 
 

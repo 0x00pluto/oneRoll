@@ -65,3 +65,28 @@ $.cookie = function (b, j, m) {
         return d
     }
 };
+function zeroPad(nr, base) {
+    var len = (String(base).length - String(nr).length) + 1;
+    return len > 0 ? new Array(len).join('0') + nr : nr;
+}
+/**
+ * 格式化字符串
+ * @param timeMilliSecond
+ * @returns {string}
+ * @constructor
+ */
+function FormatTimeToYYYYMMDDHHMMSSMMM(timeMilliSecond) {
+    var date = new Date(timeMilliSecond);
+    var formatString = date.getFullYear() + "-" + zeroPad((date.getMonth() + 1), 10) + "-" + zeroPad(date.getDay(), 10) + " "
+        + zeroPad(date.getHours(), 10) + ":" + zeroPad(date.getMinutes(), 10) + ":" + zeroPad(date.getSeconds(), 10)
+        + "." + zeroPad(date.getMilliseconds(), 100);
+    return formatString;
+}
+
+function FormatTimeToYYYYMMDDHHMMSS(Second) {
+
+    var date = new Date(Second * 1000);
+    var formatString = date.getFullYear() + "-" + zeroPad((date.getMonth() + 1), 10) + "-" + zeroPad(date.getDay(), 10) + " "
+        + zeroPad(date.getHours(), 10) + ":" + zeroPad(date.getMinutes(), 10) + ":" + zeroPad(date.getSeconds(), 10);
+    return formatString;
+}

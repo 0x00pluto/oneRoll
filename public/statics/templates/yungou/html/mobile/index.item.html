@@ -368,12 +368,12 @@
             </p></div>
             {wc:if:end}
             <div id="btnBuyBox" class="pBtn" codeid="{wc:$item['id']}">
-                <a style="width: 43%;margin-right: 2%;margin-left: 1%;" href="javascript:;" class="fl buyBtn">立即云购</a>
-                <a style="width: 42%;" href="javascript:;" class="fl addBtn">加入购物车</a>
+                <a style="width: 96%;margin-right: 2%;margin-left: 1%;" href="javascript:;" class="fl buyBtn">立即购买</a>
+                <!--<a style="width: 42%;" href="javascript:;" class="fl addBtn">加入购物车</a>-->
 
-                <a style="margin:0;width: 10%;height: 33px;" class="xiangxigw" href="{WEB_PATH}/mobile/cart/cartlist"><i
-                        style="margin: 6px auto;float: none;position: relative;" id="btnCart" class="{wc:$f_car}">
-                    &nbsp;</i></a>
+                <!--<a style="margin:0;width: 10%;height: 33px;" class="xiangxigw" href="{WEB_PATH}/mobile/cart/cartlist"><i-->
+                        <!--style="margin: 6px auto;float: none;position: relative;" id="btnCart" class="{wc:$f_car}">-->
+                    <!--&nbsp;</i></a>-->
 
             </div>
             {wc:if:end}
@@ -388,8 +388,10 @@
                         class="orange arial">{wc:$sum}</strong>条评论</a>
                 <a href="{WEB_PATH}/mobile/mobile/goodsdesc/{wc:$item['id']}"><b class="fr z-arrow"></b>图文详情<em>（建议WIFI下使用）</em>
                 </a>
+                <a href="{WEB_PATH}/mobile/mobile/goodsdesc/{wc:$item['id']}"><b class="fr z-arrow"></b>往期揭晓
+                </a>
                 <a style="border-color: #efefef;box-shadow:0px 0px 0px #e7e7e7;"
-                   href="{WEB_PATH}/mobile/mobile/buyrecords/{wc:$item['id']}"><b class="fr z-arrow jilu"></b>所有云购记录</a>
+                   href="{WEB_PATH}/mobile/mobile/buyrecords/{wc:$item['id']}"><b class="fr z-arrow jilu"></b>所有购买记录</a>
             </dl>
             <!-- 上期获得者
             {wc:if $item['q_end_time'] !=''}
@@ -799,8 +801,7 @@
     </script>
     <script>
         $(function () {
-            {
-                wc:if $itemlist}
+            {wc:if $itemlist}
             $(".blue").click(function () {
                 window.location.href = "{WEB_PATH}/mobile/mobile/userindex/{wc:$itemlist[0]['q_uid']}";
             });
@@ -808,10 +809,7 @@
             $(".orange.arial").click(function () {
                 window.location.href = "{WEB_PATH}/mobile/mobile/dataserver/{wc:$itemlist[0]['id']}";
             });
-            {
-                wc:if:
-                end
-            }
+            {wc:if:end}
 
             // 揭晓倒计时
             var divLotteryTime = $('#divLotteryTime');

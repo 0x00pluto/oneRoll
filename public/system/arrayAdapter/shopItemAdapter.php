@@ -28,7 +28,9 @@ class shopItemAdapter extends arrayAdapter
         "picarr" => "",
         'LuckUserId' => "",
         'LuckRoleName' => "",
-        "LuckRoleHeadIconURL" => ""
+        "LuckRoleHeadIconURL" => "",
+        "status" => "",
+        "content" => ""
     ];
 
 
@@ -47,6 +49,10 @@ class shopItemAdapter extends arrayAdapter
         return "shopimg/20160728/60647127697356.png";
     }
 
+    public function getContentAttribute()
+    {
+        return "";
+    }
     public function getPicArrAttribute()
     {
         return [
@@ -70,7 +76,7 @@ class shopItemAdapter extends arrayAdapter
 //        \hellaEngine\support\dump([
 //            $this->data['mallGoodsData']['goodsPeriod'],
 //            ]);
-        return intval($this->data['mallGoodsData']['goodsPeriod']) + 1 +10000000;
+        return intval($this->data['mallGoodsData']['goodsPeriod']) + 1 + 10000000;
     }
 
     public function getMoneyAttribute()
@@ -131,5 +137,11 @@ class shopItemAdapter extends arrayAdapter
     public function getShenyurenshuAttribute()
     {
         return $this['zongrenshu'] - $this['canyurenshu'];
+    }
+
+
+    public function getStatusAttribute()
+    {
+        return $this->data['mallGoodsData']['status'];
     }
 }
