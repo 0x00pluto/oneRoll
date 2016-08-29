@@ -37,46 +37,43 @@ class ajax extends base
 
         //查询购物车的信息
 
-        $Mcartlist = _getcookie("Cartlist");
-
-        $this->Mcartlist = json_decode(stripslashes($Mcartlist), true);
+        $this->Mcartlist = _getcookie("Cartlist", []);
 
 
-        $Mcartlist_jf = _getcookie("Cartlist_jf");
+        $this->Mcartlist_jf = _getcookie("Cartlist_jf", []);
 
-        $this->Mcartlist_jf = json_decode(stripslashes($Mcartlist_jf), true);
 
     }
 
     public function init()
     {
 
-        if (ROUTE_A != 'userphotoup' and ROUTE_A != 'singphotoup') {
+//        if (ROUTE_A != 'userphotoup' and ROUTE_A != 'singphotoup') {
+//
+//            if (!$this->userinfo) _message("请登录", WEB_PATH . "/mobile/user/login", 3);
+//
+//        }
+//
+//
+//        $member = $this->userinfo;
+//
+//        $title = "我的会员中心";
+//
+//
+//        $user['code'] = 1;
+//
+//        $user['username'] = get_user_name($member['uid']);
+//
+//        $user['uid'] = $member['uid'];
+//
+//        if (!empty($member)) {
+//
+//            $user['code'] = 0;
+//
+//        }
 
-            if (!$this->userinfo) _message("请登录", WEB_PATH . "/mobile/user/login", 3);
 
-        }
-
-
-        $member = $this->userinfo;
-
-        $title = "我的会员中心";
-
-
-        $user['code'] = 1;
-
-        $user['username'] = get_user_name($member['uid']);
-
-        $user['uid'] = $member['uid'];
-
-        if (!empty($member)) {
-
-            $user['code'] = 0;
-
-        }
-
-
-        echo json_encode($user);
+        echo json_encode([]);
 
 
     }
@@ -235,9 +232,9 @@ class ajax extends base
     public function addShopCart()
     {
 
-        $ShopId = safe_replace($this->segment(4));
+        $ShopId = strval(safe_replace($this->segment(4)));
 
-        $ShopNum = safe_replace($this->segment(5));
+        $ShopNum = intval(safe_replace($this->segment(5)));
 
 
         $cartbs = safe_replace($this->segment(6));//标识从哪里加的购物车
@@ -247,7 +244,12 @@ class ajax extends base
 
         $Mcartlist = $this->Mcartlist;
 
-        if ($ShopId == 0 || $ShopNum == 0) {
+//        var_dump([
+//            $ShopId,
+//            $ShopNum,
+//            $Mcartlist
+//        ]);
+        if (empty($ShopId) || $ShopNum == 0) {
 
 
             $cart['code'] = 1;   //表示添加失败
@@ -298,7 +300,8 @@ class ajax extends base
             }
 
 
-            _setcookie('Cartlist', json_encode($Mcartlist), '');
+//            \hellaEngine\support\dump($Mcartlist);
+            _setcookie('Cartlist', $Mcartlist);
 
             $cart['code'] = 0;   //表示添加成功
 
@@ -405,64 +408,16 @@ class ajax extends base
 
         $cartlist = $this->Mcartlist;
 
+        $cart = [];
 
-        if ($ShopId == 0) {
-
-
+        if (empty($ShopId)) {
             $cart['code'] = 1;   //删除失败
-
 
         } else {
 
-            if (is_array($cartlist)) {
-
-                if (count($cartlist) == 1) {
-
-                    foreach ($cartlist as $key => $val) {
-
-                        if ($key == $ShopId) {
-
-                            $cart['code'] = 0;
-
-                            _setcookie('Cartlist', '', '');
-
-                        } else {
-
-                            $cart['code'] = 1;
-
-                        }
-
-                    }
-
-
-                } else {
-
-                    foreach ($cartlist as $key => $val) {
-
-                        if ($key == $ShopId) {
-
-                            $cart['code'] = 0;
-
-                        } else {
-
-                            $Mcartlist[$key]['num'] = $val['num'];
-
-                        }
-
-                    }
-
-
-                    _setcookie('Cartlist', json_encode($Mcartlist), '');
-
-
-                }
-
-
-            } else {
-
-                $cart['code'] = 1;   //删除失败
-
-            }
+            unset($cartlist[$ShopId]);
+            _setcookie('Cartlist', $cartlist);
+            $cart['code'] = 0;
 
 
         }

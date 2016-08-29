@@ -28,7 +28,9 @@ class application
         if (method_exists($controller, ROUTE_A)) {
             call_user_func(array($controller, ROUTE_A));
         } else {
-            _error('Action does not exist.', '...');
+            var_dump($_SERVER);
+            var_dump(ROUTE_A);
+            _error('Action does not exist.:' . $FilePath, '...');
             exit();
         }
     }

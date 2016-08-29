@@ -25,6 +25,9 @@
     <script src="{G_TEMPLATES_JS}/mobile/jquery.lazyload.min.js"></script>
     <script src="{G_TEMPLATES_JS}/mobile/ajax.js"></script>
     <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="{G_TEMPLATES_JS}/mobile/weibo.js"></script>
+
+
     <script>
         var DuoBao = {};
         var __data__ = (function () {
@@ -95,7 +98,7 @@
                 </li>
                 <li class="new">
                     <a href="{WEB_PATH}/mobile/mobile/about">
-                        <em>问题</em>
+                        <em>帮助</em>
                     </a>
                 </li>
             </ul>
@@ -117,7 +120,7 @@
                 </div>
             </div>
             <script>
-                var speed = 60
+                var speed = 60;
                 var demo = document.getElementById("demo");
                 var demo2 = document.getElementById("demo2");
                 var demo1 = document.getElementById("demo1");
@@ -147,6 +150,9 @@
             }
 
         </style>
+        <div style="height: 1.5rem;background-color: #f7f7f7;border-top: 1px solid #e0e0e0">
+
+        </div>
         <div class="tabs-wrap" style="min-height:1000px;">
             <div id="fldh" class="zxjx" style="border-bottom: 1px solid #dcdcdc;">
                 <!--
@@ -233,7 +239,8 @@ if( ROUTE_C == 'mobile' && ROUTE_A == 'glist'){ $f_whole = 'cur'; }else if( ROUT
                 $("#pagenum").val(data[0].page);
                 for (var i = 0; i < data.length; i++) {
                     var ul = '<ul><li>';
-                    ul += '<span id="' + data[i].id + '" class="z-Limg" style="position:relative;display:block;"><img src="{G_UPLOAD_PATH}/' + data[i].thumb + '"><div id="jiazhi1">' + data[i].money + '元\n商品</div></span>';
+                    ul += '<span id="' + data[i].id + '" class="z-Limg" style="position:relative;display:block;"><img src="{G_UPLOAD_PATH}/' + data[i].thumb + '">' +
+                            '<div id="jiazhi1" >' + data[i].money + '元商品</div></span>';
                     ul += '<div style="margin-top:15px;" class="goodsListR">';
                     ul += '<h2 id="' + data[i].id + '">' + data[i].title + '</h2>';
                     ul += '</div>';
@@ -242,9 +249,9 @@ if( ROUTE_C == 'mobile' && ROUTE_A == 'glist'){ $f_whole = 'cur'; }else if( ROUT
                     ul += '<div style="color:#646464;margin-top:2px;">';
                     var num = (data[i].canyurenshu / data[i].zongrenshu) * 100;
                     num = num.toFixed(2);
-                    ul += '进度&nbsp;<label class="color_blue" id="jd">' + num + '%</label>';
+                    ul += '<span style="color: #686868">进度<span>&nbsp;<label class="color_blue" style="color: #ffb429" id="jd">' + num + '%</label>';
                     ul += '</div>';
-                    ul += '<p class="u-progress jdt" style="margin-left:0;"><span class="pgbar" style="width:' + num + '%;"><span class="pging"></span></span></p></div>';
+                    ul += '<p class="u-progress" style="margin-left:0;"><span class="pgbar" style="width:' + num + '%;"><span class="pging"></span></span></p></div>';
                     ul += '<div class="buy_container"><div class="btn_buy">';
                     ul += '<a class="add " codeid="' + data[i].id + '" href="javascript:;"></a>';
                     ul += '</div></div></div></li></ul>';
@@ -392,65 +399,3 @@ if( ROUTE_C == 'mobile' && ROUTE_A == 'glist'){ $f_whole = 'cur'; }else if( ROUT
 </ul>
 -->
 <input name="hidLineLink" type="hidden" id="hidLineLink" value="{WEB_PATH}/mobile/mobile/"/>
-<!--<script>-->
-<!--wx.config({-->
-<!--debug: false,-->
-<!--appId: "{wc:php:start} echo $wechat['appid'];{wc:php:end}",-->
-<!--timestamp: {wc:php:start} echo $signPackage["timestamp"];{wc:php:end},-->
-<!--nonceStr: '{wc:php:start} echo $signPackage["nonceStr"];{wc:php:end}',-->
-<!--signature: '{wc:php:start} echo $signPackage["signature"];{wc:php:end}',-->
-<!--jsApiList: ["checkJsApi", "onMenuShareAppMessage", "onMenuShareTimeline", "onMenuShareWeibo", "onMenuShareQQ"]-->
-<!--});-->
-<!--wx.ready(function () {-->
-<!--var n = $("#hidLineLink").val();-->
-<!--wx.onMenuShareTimeline({-->
-<!--title: "梦想还是要有的，因为一定会实现！", // 分享标题-->
-<!--link: n, // 分享链接-->
-<!--imgUrl: "{G_TEMPLATES_STYLE}/images/mobile/app.png", // 分享图标-->
-<!--success: function () {-->
-<!--alert('已分享');-->
-<!--},-->
-<!--cancel: function () {-->
-<!--alert('已取消');-->
-<!--}-->
-<!--});-->
-<!--wx.onMenuShareAppMessage({-->
-<!--title: "梦想还是要有的，因为一定会实现！", // 分享标题-->
-<!--desc: "请您相信，美好的事情永远会真实地在这里发生。快来试试吧，比买彩票还过瘾！所有的幸运，只需1元！", // 分享描述-->
-<!--link: n, // 分享链接-->
-<!--imgUrl: "{G_TEMPLATES_STYLE}/images/mobile/app.png", // 分享图标-->
-<!--type: '', // 分享类型,music、video或link，不填默认为link-->
-<!--dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空-->
-<!--success: function () {-->
-<!--alert('已分享');-->
-<!--},-->
-<!--cancel: function () {-->
-<!--alert('已取消');-->
-<!--}-->
-<!--});-->
-<!--wx.onMenuShareQQ({-->
-<!--title: "梦想还是要有的，因为一定会实现！", // 分享标题-->
-<!--desc: "请您相信，美好的事情永远会真实地在这里发生。快来试试吧，比买彩票还过瘾！所有的幸运，只需1元！", // 分享描述-->
-<!--link: n, // 分享链接-->
-<!--imgUrl: "{G_TEMPLATES_STYLE}/images/mobile/app.png", // 分享图标-->
-<!--success: function () {-->
-<!--// 用户确认分享后执行的回调函数-->
-<!--},-->
-<!--cancel: function () {-->
-<!--// 用户取消分享后执行的回调函数-->
-<!--}-->
-<!--});-->
-<!--wx.onMenuShareWeibo({-->
-<!--title: "梦想还是要有的，因为一定会实现！", // 分享标题-->
-<!--desc: "请您相信，美好的事情永远会真实地在这里发生。快来试试吧，比买彩票还过瘾！所有的幸运，只需1元！", // 分享描述-->
-<!--link: n, // 分享链接-->
-<!--imgUrl: "{G_TEMPLATES_STYLE}/images/mobile/app.png", // 分享图标-->
-<!--success: function () {-->
-<!--alert('已分享');-->
-<!--},-->
-<!--cancel: function () {-->
-<!--alert('已取消');-->
-<!--}-->
-<!--});-->
-<!--});-->
-</script>

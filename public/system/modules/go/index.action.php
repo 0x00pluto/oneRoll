@@ -116,6 +116,9 @@ class index extends base
         // $couplet_img = explode(',',$couplet['content']);
 
 //        __weiBoAuth();
+
+
+//        var_dump($webConfig);
         include templates("index", "index");
     }
 
@@ -757,29 +760,29 @@ class index extends base
     public function jxdjs()
     {
 
-		$shopdjs=$this->db->GetList("select * from `@#_shoplist` where `canyurenshu`=`zongrenshu` ORDER BY `q_end_time` DESC LIMIT 5");
-		$jxdjs=$this->db->GetOne("select id from `@#_shoplist` where `canyurenshu`=`zongrenshu` and `q_end_time`<=$time");
-		$djs_id=$jxdjs[id];
-		$html='';
-		foreach($shopdjs as $key=>$djs){
-			$djs['q_user'] = unserialize($djs['q_user']);
-			$html.='<li class="w-goodsList-item">';
-			//if($djs['q_uid']){
-			//	$html.='<i class="ico ico-label ico-label-yjx"></i>';
-			//}else{
-			//	$html.='<i class="ico ico-label ico-label-zzjx"></i>';
-			//}
+        $shopdjs = $this->db->GetList("select * from `@#_shoplist` where `canyurenshu`=`zongrenshu` ORDER BY `q_end_time` DESC LIMIT 5");
+        $jxdjs = $this->db->GetOne("select id from `@#_shoplist` where `canyurenshu`=`zongrenshu` and `q_end_time`<=$time");
+        $djs_id = $jxdjs[id];
+        $html = '';
+        foreach ($shopdjs as $key => $djs) {
+            $djs['q_user'] = unserialize($djs['q_user']);
+            $html .= '<li class="w-goodsList-item">';
+            //if($djs['q_uid']){
+            //	$html.='<i class="ico ico-label ico-label-yjx"></i>';
+            //}else{
+            //	$html.='<i class="ico ico-label ico-label-zzjx"></i>';
+            //}
 
-			$html.='<div class="index_body_tjsp_img"><a href="'.WEB_PATH.'/dataserver/'.$djs[id].'" title="'.$djs[title].'" target="_blank"><img alt="'.$djs[title].'" src="'.G_UPLOAD_PATH.'/'.$djs[thumb].'" /></a></div>';
-			$html.='<p><a title="'.$djs['title'].'" href="'.WEB_PATH.'/dataserver/'.$djs['id'].'" target="_blank">(第'.$djs['qishu'].'期) '.$djs['title'].'</a></p>';
-			if($djs['q_uid']){
-				$html.='<div class="countdown_end"><p class="countdown_end_p">恭喜<a href="'.WEB_PATH.'/uname/'.idjia($djs[q_uid]).'" title="'.get_user_name($djs[q_user]).'(ID:'.$djs['q_uid'].')">'.get_user_name($djs['q_user']).'</a>获得</p></div>';
-			}else{
-				$html.='<div class="countdown_nums"><p class="countdown_nums_p"><b class="count-m0">0</b><b class="count-m1">0</b>:<b class="count-s0">0</b><b class="count-s1">0</b>:<b class="count-ms0">0</b><b class="count-ms1">0</b></p></div>';
-			}
-			$html.='</li>';
-		}
-		echo $html;
+            $html .= '<div class="index_body_tjsp_img"><a href="' . WEB_PATH . '/dataserver/' . $djs[id] . '" title="' . $djs[title] . '" target="_blank"><img alt="' . $djs[title] . '" src="' . G_UPLOAD_PATH . '/' . $djs[thumb] . '" /></a></div>';
+            $html .= '<p><a title="' . $djs['title'] . '" href="' . WEB_PATH . '/dataserver/' . $djs['id'] . '" target="_blank">(第' . $djs['qishu'] . '期) ' . $djs['title'] . '</a></p>';
+            if ($djs['q_uid']) {
+                $html .= '<div class="countdown_end"><p class="countdown_end_p">恭喜<a href="' . WEB_PATH . '/uname/' . idjia($djs[q_uid]) . '" title="' . get_user_name($djs[q_user]) . '(ID:' . $djs['q_uid'] . ')">' . get_user_name($djs['q_user']) . '</a>获得</p></div>';
+            } else {
+                $html .= '<div class="countdown_nums"><p class="countdown_nums_p"><b class="count-m0">0</b><b class="count-m1">0</b>:<b class="count-s0">0</b><b class="count-s1">0</b>:<b class="count-ms0">0</b><b class="count-ms1">0</b></p></div>';
+            }
+            $html .= '</li>';
+        }
+        echo $html;
 
         echo "1";
     }

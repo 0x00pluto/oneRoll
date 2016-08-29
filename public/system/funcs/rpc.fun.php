@@ -17,11 +17,16 @@ class CommonUtils
         $ch = curl_init();
         switch (strtoupper($method)) {
             case 'GET' :
+
+                $queryString = $query;
+
                 if (false === stripos($url, '?')) {
-                    $url .= '?' . $query;
+                    $url .= '?' . $queryString;
                 } else {
-                    $url .= '&' . $query;
+                    $url .= '&' . $queryString;
                 }
+
+//                var_dump($url);
                 break;
             case 'POST' :
                 curl_setopt($ch, CURLOPT_POST, 1);
@@ -54,13 +59,18 @@ class CommonUtils
 /**
  * @param $cmd
  * @param array $params
+ * @param array $headerParams
  * @return \hellaEngine\RPCMessage\RPCMessageReturn
  */
-function callRpc($cmd, array $params = [])
+function callRpc($cmd, array $params = [], $headerParams = [])
 {
 
     $sendMessage = \hellaEngine\RPCMessage\RPCMessage::createWithRpc($cmd, $params);
     $sendMessage->setMessageBodyProperty('clientVersion', '2.0.0');
+    foreach ($headerParams as $key => $headerParam) {
+        $sendMessage->setMessageBodyProperty($key, $headerParam);
+
+    }
 
     $responseOrigin = CommonUtils::http("http://oneroll.tomatofuns.com/", ['data' => $sendMessage->encode()]);
     if ($responseOrigin['http_code'] != 200) {
@@ -72,4 +82,22 @@ function callRpc($cmd, array $params = [])
 
     return $responseMessage->toRpcMessageReturn();
 
+}
+
+function http($url, $query = "", $method = 'POST')
+{
+    return CommonUtils::http($url, $query, $method);
+}
+
+function httpParams($query)
+{
+    $queryStringArray = [];
+    if (is_array($query)) {
+        foreach ($query as $key => $value) {
+            $queryStringArray[] = "$key=$value";
+        }
+    } else {
+        $queryStringArray[] = $query;
+    }
+    return join("&", $queryStringArray);
 }

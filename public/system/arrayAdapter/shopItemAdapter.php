@@ -53,6 +53,7 @@ class shopItemAdapter extends arrayAdapter
     {
         return "";
     }
+
     public function getPicArrAttribute()
     {
         return [
@@ -96,7 +97,9 @@ class shopItemAdapter extends arrayAdapter
 
     public function getQEndTimeAttribute()
     {
-        if ($this->data['mallGoodsData']['status'] == 2) {
+        if ($this->data['mallGoodsData']['status'] == 1 ||
+            $this->data['mallGoodsData']['status'] == 2
+        ) {
             return $this->data['mallGoodsData']['goodsRollResult']['rollTime'];
         } else {
             return null;

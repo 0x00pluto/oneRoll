@@ -71,12 +71,15 @@ $(function () {
                                 '<img src="' + Gobal.LoadPic + '" src2="' + Gobal.imgpath + '/uploads/' + r[q].thumb + '"></li>' +
                                 '<li class="revConR">' +
                                 '<dl>' +
-                                // '<dd class="touxianga"><img name="uImg" uweb="' + r[q].LuckUserId + '" src="' + Gobal.imgpath + '/uploads/' + r[q].LuckRoleHeadIconURL + '"></dd>' +
-                                '<dd><span>获得者<strong>：</strong><a name="uName" uweb="' + r[q].LuckUserId + '" class="rUserName blue">' + r[q].LuckRoleName + '</a></span>本期购买<strong>：</strong><em class="orange arial">' + r[q].zongrenshu + '</em>人次</dd>' +
+                                '<dd>' +
+                                '<span class="title">' + r[q].title + '</span>' +
+                                '<span>获得者<strong>：</strong><a name="uName" uweb="' + r[q].LuckUserId + '" class="rUserName blue">' + r[q].LuckRoleName + '</a></span>' +
+                                '<span>本期购买<strong>：</strong>' + '<em class="blue arial">' + r[q].zongrenshu + '</em>人次</span>' +
+                                '<span>幸运码：<em class="arial" style="color: #ffb429">' + r[q].q_user_code + '</em></span>' +
+                                '<span>揭晓时间：<em class=" arial">' + r[q].q_end_time_str + '000</em></span>' +
+                                '</dd>' +
                                 '</dl>' +
-                                '<dt>幸运码：<em class="orange arial">' + r[q].q_user_code + '</em><br/>' +
-                                '揭晓时间：<em class="c9 arial">' + r[q].q_end_time_str + '000</em></dt>' +
-                                '<b class="fr z-arrow"></b></li>' +
+                                '</li>' +
                                 '</ul>';
                             var u = $(v);
 
@@ -193,8 +196,13 @@ $(function () {
 
                         var u = $('<ul class="rNow rFirst" id="' + s.id + '">' +
                             '<li class="revConL"><img src="' + Path.path + '/statics/uploads/' + s.thumb + '"></li>' +
-                            '<li class="revConR"><h4>' + s.title + "</h4><h5>期号：" + s.qishu + '</h5>' +
-                            '<p name="pTime"><s></s>揭晓倒计时 <strong><em>00</em> : <em>00</em> : <em>0</em><em>0</em></strong></p><b class="fr z-arrow"></b></li>' +
+                            '<li class="revConR">' +
+                            '<dd>' +
+                            '<span class="title">' + s.title + '</span>' +
+                            '<span>期号： ' + s.qishu + '</span>' +
+                            '<span style="color: #FF2D46">即将揭晓</span>' +
+                            '<p name="pTime"><s></s> <strong><em>00</em>:<em>00</em>:<em>0</em><em>0</em></strong></p>' +
+                            '</dd></li>' +
                             '<div class="rNowTitle">正在揭晓</div></ul>');
 
                         u.click(function () {

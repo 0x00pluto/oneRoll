@@ -393,20 +393,24 @@ function _encrypt($string, $operation = 'ENCODE', $key = '', $expiry = 0)
 }
 
 
-function _getcookie($name)
+function _getcookie($name, $default = null)
 {
 
+
     if (empty($name)) {
-        return false;
+        return $default;
     }
 
     if (isset($_COOKIE[$name])) {
 
-        return $_COOKIE[$name];
+        $value = $_COOKIE[$name];
+
+
+        return _unserialize($value);
 
     } else {
 
-        return false;
+        return $default;
 
     }
 
@@ -416,6 +420,9 @@ function _getcookie($name)
 function _setcookie($name, $value, $time = 0, $path = '/', $domain = '')
 {
 
+    $value = _serialize($value);
+
+
     if (empty($name)) {
         return false;
     }
@@ -423,17 +430,19 @@ function _setcookie($name, $value, $time = 0, $path = '/', $domain = '')
     $_COOKIE[$name] = $value;                //及时生效
 
     $s = $_SERVER['SERVER_PORT'] == '443' ? 1 : 0;
-
-    if (!$time) {
-
-        return setcookie($name, $value, 0, $path, $domain, $s);
-
-    } else {
-
-        return setcookie($name, $value, time() + $time, $path, $domain, $s);
-
+    if ($time == 0) {
+        $time = time();
     }
 
+
+    return setcookie($name, $value, time() + $time, $path, $domain, $s);
+
+
+}
+
+function _clearCookie($name)
+{
+    setcookie($name);
 }
 
 
@@ -537,12 +546,6 @@ function templates($module = '', $template = '', $StyleTheme = '')
 
 }
 
-function __weiBoAuth()
-{
-    $weibo = System::load_sys_config('thirdparty', 'weibo');
-    $authUrl = $weibo['url'] . "oauth2/authorize?client_id=" . $weibo['appid'] . "&redirect_uri=" . $weibo['redirecturi'] . "&response_type=code";
-    header("Location: " . $authUrl);
-}
 
 /**
  * 字符截取 支持UTF8/GBK

@@ -42,15 +42,21 @@
 }
 
 .g-Cart-list .u-Cart-img {
-    margin: 8px 5px 0 5px;
+    /*margin: 8px 5px 0 0px;*/
+    width: 120px;
+    height: 120px;
+
 }
 
 .g-Cart-list .u-Cart-img img {
-    width: 80px;
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 100px;
+    height: 100px;
 }
 
 .g-Cart-list .u-Cart-r {
-    margin-left: 90px;
+    margin-left: 120px;
     margin-top: 5px;
     margin-right: 8px;
 }
@@ -62,49 +68,62 @@
 
 .u-Cart-r .z-Cart-tt {
     min-width: 15px;
-    height: 16px;
-    line-height: 16px;
+    height: 20px;
+    line-height: 20px;
     overflow: hidden;
-    margin-bottom: 0;
+    margin-bottom: 10px;
+}
+
+.u-Cart-r .z-Cart-tt .Goods-Title {
+    color: #333333;
+    font-size: 14px;
+    letter-spacing: 1px;
 }
 
 .u-Cart-r .z-promo {
+    letter-spacing: 1px;
     display: block;
     font-size: 12px;
-    margin-bottom: 3px;
+    color: #828282;
+    margin-bottom: 2px;
+    /*margin-bottom: 3px;*/
+}
+
+.u-Cart-r .z-promo .shengyu {
+    color: #6bcad9;
 }
 
 .f-Cart-Other {
-    width: 100%;
-    margin-bottom: 10px;
+    width: 98%;
+    margin-top: 5px;
     display: inline-block;
 }
 
 .f-Cart-Other .z-del {
-    width: 28px;
-    height: 28px;
-    border-radius: 3px;
+    width: 25px;
+    height: 25px;
+    /*border-radius: 3px;*/
     border: 1px solid #ccc;
     display: inline-block;
     background-position: -51px -59px;
 }
 
 .f-Cart-Other .z-amount {
-    color: #666;
-    font-family:Microsoft YaHei, Arial;
+    color: #71ccda;
+    font-family: Microsoft YaHei, Arial;
     line-height: 16px;
     font-size: 16px;
-    width: 58px;
+    width: 39px;
     border: 1px solid #BBB;
     text-align: center;
-    height: 28px;
+    height: 26px;
 }
 
 .f-Cart-Other .z-jian,
 .f-Cart-Other .z-jia {
-    width: 28px;
-    height: 28px;
-    border-radius: 3px;
+    width: 26px;
+    height: 26px;
+    /*border-radius: 3px;*/
     text-align: center;
     display: inline-block;
     color: #999;
@@ -124,23 +143,30 @@
 }
 
 .f-Cart-Other .z-jia {
-    line-height: 28px;
+    line-height: 27px;
     font-size: 20px;
     border-left: none;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
+    /*border-top-left-radius: 0px;*/
+    /*border-bottom-left-radius: 0px;*/
+    /*border-top-right-radius: 20px;*/
+    /*border-bottom-right-radius: 20px;*/
 }
 
 .f-Cart-Other .z-jian {
     font-size: 24px;
     line-height: 25px;
     border-right: none;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
+    /*border-top-right-radius: 0px;*/
+    /*border-bottom-right-radius: 0px;*/
+    /*border-top-left-radius: 20px;*/
+    /*border-bottom-left-radius: 20px;*/
+}
+
+.f-Cart-Other .price {
+    line-height: 30px;
+    left: 2px;
+    color: #828282;
+    display: inline-block;
 }
 
 .g-Total-bt {
@@ -165,7 +191,6 @@
     margin-top: -1px;
     display: none;
 }
-
 .g-pay-lst li {
     line-height: 20px;
     border-bottom: 1px dotted #CBCBCB;
@@ -182,6 +207,7 @@
     display: inline-block;
     margin-right: 18%;
     overflow: hidden;
+    font-size: 16px;
 }
 
 .g-pay-lst li span {
@@ -191,12 +217,16 @@
     position: absolute;
     right: 10px;
     top: 10px;
+    font-size: 13px;
+    line-height: 20px;
+    height: 20px;
 }
 
 .g-pay-Total {
     line-height: 33px;
     text-align: right;
     padding-right: 10px;
+    font-size: 16px;
 }
 
 .g-pay-bline {

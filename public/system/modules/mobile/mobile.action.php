@@ -5,6 +5,7 @@ System::load_app_fun('my');
 System::load_app_fun('user');
 System::load_sys_fun('user');
 System::load_sys_class('arrayProbe');
+System::load_sys_fun('weibo');
 
 class mobile extends base
 {
@@ -44,12 +45,29 @@ class mobile extends base
 
         $categorys = rpc_a_get_category("", "");
 
+
+        __weiBoAuth();
+
+
         include templates("mobile/index", "index");
 
 
 //        var_dump($shopqishu);
 
 //        arrayProbe::dumpProbes();
+    }
+
+
+    public function auth()
+    {
+        $code = explode('=', $this->segment(4))[1];
+        __weiBoAuto_AccessToken($code);
+
+
+//        __weiBo_UserInfo();
+        header("Location: /");
+
+//        __weibo_tokenInfo();
     }
 
     //首页
@@ -492,7 +510,7 @@ class mobile extends base
         $item = rpc_mall_getGoodsInfo($itemid);
 
         if (!$item) _messagemobile("商品不存在！");
-        if ($item['q_end_time']) {
+        if ($item['status'] == 2) {
 
             header("location: " . WEB_PATH . "/mobile/mobile/dataserver/" . $item['id']);
             exit;
@@ -500,15 +518,22 @@ class mobile extends base
 
 
         $sid = $item['sid'];
-//        $sid_code = $mysql_model->GetOne("select * from `@#_shoplist` where `sid`='$sid' order by `id` DESC LIMIT 1,1");
-//        $sid_go_record = $mysql_model->GetOne("select * from `@#_member_go_record` where `shopid`='$sid_code[sid]' and `uid`='$sid_code[q_uid]' order by `id` DESC LIMIT 1");
-//
-//        $category = $mysql_model->GetOne("select * from `@#_category` where `cateid` = '$item[cateid]' LIMIT 1");
-//        $brand = $mysql_model->GetOne("select * from `@#_brand` where `id`='$item[brandid]' LIMIT 1");
-
         $title = $item['title'];
         $syrs = $item['zongrenshu'] - $item['canyurenshu'];
         $item['picarr'] = unserialize($item['picarr']);
+
+
+        $storageId = $item['storageGoodsId'];
+        $itemzx = rpc_mall_getAllSellingGoodsByStorageId($storageId);
+
+
+        $records = null;
+        if (__weiBoIsLogin()) {
+
+            $records = rpc_records_getRecordsByGoodsId($itemid);
+
+//            var_dump($records);
+        }
 
 
         include templates("mobile/index", "item");
@@ -1010,7 +1035,7 @@ class mobile extends base
     //访问个人主页
     public function userindex()
     {
-        var_dump("1");
+//        var_dump("1");
         $webname = $this->_cfg['web_name'];
         $uid = safe_replace($this->segment(4));
         //$uid=intval($this->segment(4))-1000000000;

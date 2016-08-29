@@ -203,6 +203,7 @@
             //添加到购物车
             $(document).on("click", '.add', function () {
                 var codeid = $(this).attr('codeid');
+                console.log('{WEB_PATH}/mobile/ajax/addShopCart/' + codeid + '/1');
                 $.getJSON('{WEB_PATH}/mobile/ajax/addShopCart/' + codeid + '/1', function (data) {
                     if (data.code == 1) {
                         addsuccess('添加失败');

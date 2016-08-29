@@ -1,748 +1,716 @@
-<?php 
+<?php
 
-defined('G_IN_SYSTEM')or exit('No permission resources.');
+defined('G_IN_SYSTEM') or exit('No permission resources.');
 
-System::load_app_class('base','member','no');
+System::load_app_class('base', 'member', 'no');
 
-System::load_app_fun('user','go');
+System::load_app_fun('user', 'go');
+System::load_sys_fun('rpcadapter');
 
-class cart extends base {
+class cart extends base
+{
 
-	private $Cartlist;
+    private $Cartlist;
 
-	public function __construct() {			
+    public function __construct()
+    {
 
-		header("Last-Modified: " . gmdate( "D, d M Y H:i:s" ) . "GMT" ); 
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . "GMT");
 
-		header("Cache-Control: no-cache, must-revalidate" ); 
+        header("Cache-Control: no-cache, must-revalidate");
 
-		header("Pragma:no-cache");
+        header("Pragma:no-cache");
 
-		
 
-		$this->Cartlist = _getcookie('Cartlist');
+        $this->Cartlist = _getcookie('Cartlist');
 
-		$this->db = System::load_sys_class("model");
+        $this->db = System::load_sys_class("rpcmodel");
 
-	}
+    }
 
 
+    //获取购物车的商品信息到头部
 
-	//获取购物车的商品信息到头部
+    public function cartheader()
+    {
 
-	public function cartheader(){
+        $Cartlist = json_decode(stripslashes($this->Cartlist), true);
 
-		$Cartlist=json_decode(stripslashes($this->Cartlist),true);	
+        $shopids = '';
 
-		$shopids='';	
+        if (is_array($Cartlist)) {
 
-		if(is_array($Cartlist)){			
+            foreach ($Cartlist as $key => $val) {
 
-			foreach($Cartlist as $key => $val){
+                $shopids .= intval($key) . ',';
 
-				$shopids.=intval($key).',';				
+            }
 
-			}
+            $shopids = str_replace(',0', '', $shopids);
 
-			$shopids=str_replace(',0','',$shopids);
+            $shopids = trim($shopids, ',');
 
-			$shopids=trim($shopids,',');
+        }
 
-		}		
+        $shoplist = array();
 
-		$shoplist=array();
+        if ($shopids != NULL) {
 
-		if($shopids!=NULL){
+            $shoplist = $this->db->GetList("SELECT * FROM `@#_shoplist` where `id` in($shopids) limit 5", array("key" => "id"));
 
-			$shoplist=$this->db->GetList("SELECT * FROM `@#_shoplist` where `id` in($shopids) limit 5",array("key"=>"id"));
+        }
 
-		}
+        $MoenyCount = 0;
 
-		$MoenyCount=0;
+        $Cartshopinfo = '{';
 
-		$Cartshopinfo='{';
+        if (count($shoplist) >= 1) {
 
-		if(count($shoplist)>=1){
+            foreach ($Cartlist as $key => $val) {
 
-			foreach($Cartlist as $key => $val){
+                $key = intval($key);
 
-					$key=intval($key);					
+                if (isset($shoplist[$key])) {
 
-					if(isset($shoplist[$key])){									
+                    $shoplist[$key]['cart_gorenci'] = $val['num'] ? $val['num'] : 1;
 
-						$shoplist[$key]['cart_gorenci']=$val['num'] ? $val['num'] : 1;						
+                    $MoenyCount += $shoplist[$key]['yunjiage'] * $shoplist[$key]['cart_gorenci'];
 
-						$MoenyCount+=$shoplist[$key]['yunjiage']*$shoplist[$key]['cart_gorenci'];
+                    $shoplist[$key]['cart_xiaoji'] = substr(sprintf("%.3f", $shoplist[$key]['yunjiage'] * $val['num']), 0, -1);
 
-						$shoplist[$key]['cart_xiaoji']=substr(sprintf("%.3f",$shoplist[$key]['yunjiage']*$val['num']),0,-1);					
+                    $shoplist[$key]['cart_shenyu'] = $shoplist[$key]['zongrenshu'] - $shoplist[$key]['canyurenshu'];
 
-						$shoplist[$key]['cart_shenyu']=$shoplist[$key]['zongrenshu']-$shoplist[$key]['canyurenshu'];
+                    $Cartshopinfo .= "'$key':{'shenyu':" . $shoplist[$key]['cart_shenyu'] . ",'num':" . $val['num'] . ",'money':" . $shoplist[$key]['yunjiage'] . "},";
 
-						$Cartshopinfo.="'$key':{'shenyu':".$shoplist[$key]['cart_shenyu'].",'num':".$val['num'].",'money':".$shoplist[$key]['yunjiage']."},";
+                }
 
-					}
+            }
 
-			}
+        }
 
-		}		
+        $MoenyCount = substr(sprintf("%.3f", $MoenyCount), 0, -1);
 
-		$MoenyCount=substr(sprintf("%.3f",$MoenyCount),0,-1);	
+        $Cartshopinfo .= "'MoenyCount':$MoenyCount}";
 
-		$Cartshopinfo.="'MoenyCount':$MoenyCount}";		
+        $li = "";
+        foreach ($shoplist as $st) {
+            $li .= '<dl class="mycartcur" id="mycartcur' . $st['id'] . '">';
+            $li .= '<dt class="img"><a href="#"><img src="' . G_UPLOAD_PATH . '/' . $st['thumb'] . '"></a></dt>';
+            $li .= '<dd class="title"><a href="' . WEB_PATH . '/goods/' . $st['id'] . '">' . $st['title'] . '</a>';
+            $li .= '<span class="rmbred">' . $st['yunjiage'] . '×' . $st['cart_gorenci'] . '</span>';
+            $li .= '</dd>';
+            $li .= '<dd class="del"><a class="delGood" onclick="delheader(' . $st['id'] . ')" href="javascript:;">删除</a></dd>';
+            $li .= '</dl>';
+        }
+        if (count($shoplist) >= 5) {
+            $li .= '<dl class="mycartcur" style=" background:#fff;height:20px; text-align:right;"><a style=" color:#777;" target="_blank" href="' . WEB_PATH . '/member/cart/cartlist">查看更多<i>&gt;</i></a></dl>';
+        }
 
-		$li="";
-		foreach($shoplist as $st){
-			$li.='<dl class="mycartcur" id="mycartcur'.$st['id'].'">';
-			$li.='<dt class="img"><a href="#"><img src="'.G_UPLOAD_PATH.'/'.$st['thumb'].'"></a></dt>';
-			$li.='<dd class="title"><a href="'.WEB_PATH.'/goods/'.$st['id'].'">'.$st['title'].'</a>';
-			$li.='<span class="rmbred">'.$st['yunjiage'].'×'.$st['cart_gorenci'].'</span>';
-			$li.='</dd>';
-			$li.='<dd class="del"><a class="delGood" onclick="delheader('.$st['id'].')" href="javascript:;">删除</a></dd>';
-			$li.='</dl>';
-		}
-		if(count($shoplist)>=5){
-			$li.='<dl class="mycartcur" style=" background:#fff;height:20px; text-align:right;"><a style=" color:#777;" target="_blank" href="'.WEB_PATH.'/member/cart/cartlist">查看更多<i>&gt;</i></a></dl>';
-		}
-		
-		$shop['li']=$li;
+        $shop['li'] = $li;
 
-		if(!is_array($Cartlist)){
+        if (!is_array($Cartlist)) {
 
-			$shop['num']=0;
+            $shop['num'] = 0;
 
-		}else{
+        } else {
 
-			$shop['num']=count($Cartlist)-1;		
+            $shop['num'] = count($Cartlist) - 1;
 
-		}	
+        }
 
-	
 
-		$shop['sum']=$MoenyCount;
+        $shop['sum'] = $MoenyCount;
 
-		echo json_encode($shop);
+        echo json_encode($shop);
 
-	}
+    }
 
-	//获取购物车的商品信息
+    //获取购物车的商品信息
 
-	public function cartshop(){		
+    public function cartshop()
+    {
 
-		$Cartlist=json_decode(stripslashes($this->Cartlist),true);	
+        $Cartlist = json_decode(stripslashes($this->Cartlist), true);
 
-		$shopids='';	
+        $shopids = '';
 
-		if(is_array($Cartlist)){			
+        if (is_array($Cartlist)) {
 
-			foreach($Cartlist as $key => $val){
+            foreach ($Cartlist as $key => $val) {
 
-				$shopids.=intval($key).',';				
+                $shopids .= intval($key) . ',';
 
-			}
+            }
 
-			$shopids=str_replace(',0','',$shopids);
+            $shopids = str_replace(',0', '', $shopids);
 
-			$shopids=trim($shopids,',');	
+            $shopids = trim($shopids, ',');
 
-		}		
+        }
 
-		$shoplist=array();
+        $shoplist = array();
 
-		if($shopids!=NULL){
+        if ($shopids != NULL) {
 
-			$shoplist=$this->db->GetList("SELECT * FROM `@#_shoplist` where `id` in($shopids) limit 7",array("key"=>"id"));
+            $shoplist = $this->db->GetList("SELECT * FROM `@#_shoplist` where `id` in($shopids) limit 7", array("key" => "id"));
 
-		}	
+        }
 
-		
 
-		$MoenyCount=0;
+        $MoenyCount = 0;
 
-		$Cartshopinfo='{';
+        $Cartshopinfo = '{';
 
-		if(count($shoplist)>=1){
+        if (count($shoplist) >= 1) {
 
-			foreach($Cartlist as $key => $val){
+            foreach ($Cartlist as $key => $val) {
 
-					$key=intval($key);					
+                $key = intval($key);
 
-					if(isset($shoplist[$key])){									
+                if (isset($shoplist[$key])) {
 
-						$shoplist[$key]['cart_gorenci']=$val['num'] ? $val['num'] : 1;						
+                    $shoplist[$key]['cart_gorenci'] = $val['num'] ? $val['num'] : 1;
 
-						$MoenyCount+=$shoplist[$key]['yunjiage']*$shoplist[$key]['cart_gorenci'];
+                    $MoenyCount += $shoplist[$key]['yunjiage'] * $shoplist[$key]['cart_gorenci'];
 
-						$shoplist[$key]['cart_xiaoji']=substr(sprintf("%.3f",$shoplist[$key]['yunjiage']*$val['num']),0,-1);					
+                    $shoplist[$key]['cart_xiaoji'] = substr(sprintf("%.3f", $shoplist[$key]['yunjiage'] * $val['num']), 0, -1);
 
-						$shoplist[$key]['cart_shenyu']=$shoplist[$key]['zongrenshu']-$shoplist[$key]['canyurenshu'];
+                    $shoplist[$key]['cart_shenyu'] = $shoplist[$key]['zongrenshu'] - $shoplist[$key]['canyurenshu'];
 
-						$Cartshopinfo.="'$key':{'shenyu':".$shoplist[$key]['cart_shenyu'].",'num':".$val['num'].",'money':".$shoplist[$key]['yunjiage']."},";
+                    $Cartshopinfo .= "'$key':{'shenyu':" . $shoplist[$key]['cart_shenyu'] . ",'num':" . $val['num'] . ",'money':" . $shoplist[$key]['yunjiage'] . "},";
 
-					}
+                }
 
-			}
+            }
 
-		}		
+        }
 
-		$MoenyCount=substr(sprintf("%.3f",$MoenyCount),0,-1);	
+        $MoenyCount = substr(sprintf("%.3f", $MoenyCount), 0, -1);
 
-		$Cartshopinfo.="'MoenyCount':$MoenyCount}";		
+        $Cartshopinfo .= "'MoenyCount':$MoenyCount}";
 
 
+        $li = "";
 
-		$li="";
+        foreach ($shoplist as $st) {
 
-		foreach($shoplist as $st){			
+            $li .= '<li id="shopid' . $st['id'] . '">';
 
-			$li.='<li id="shopid'.$st['id'].'">';
+            $li .= '<a href="javascript:;" onclick="delshop(' . $st['id'] . ')" title="删除" class="Close"></a>';
 
-			$li.='<a href="javascript:;" onclick="delshop('.$st['id'].')" title="删除" class="Close"></a>';
+            $li .= '<a href="' . WEB_PATH . '/goods/' . $st['id'] . '"><img src="' . G_UPLOAD_PATH . '/' . $st['thumb'] . '" title="' . $st['title'] . '"></a>';
 
-			$li.='<a href="'.WEB_PATH.'/goods/'.$st['id'].'"><img src="'.G_UPLOAD_PATH.'/'.$st['thumb'].'" title="'.$st['title'].'"></a>';
+            $li .= '<span class="orange">' . $st['cart_gorenci'] . '</span>人次';
 
-			$li.='<span class="orange">'.$st['cart_gorenci'].'</span>人次';
+            $li .= '</li>';
 
-			$li.='</li>';
+        }
 
-		}
+        if (count($shoplist) >= 7) {
 
-		if(count($shoplist)>=7){
+            $li .= '<li class="Roll_CartMore"><a target="_blank" title="查看更多" href="' . WEB_PATH . '/member/cart/cartlist">更多<i>&gt;</i></a></li>';
 
-			$li.='<li class="Roll_CartMore"><a target="_blank" title="查看更多" href="'.WEB_PATH.'/member/cart/cartlist">更多<i>&gt;</i></a></li>';
+        }
 
-		}
 
-		
+        $shop['li'] = $li;
 
-		$shop['li']=$li;
+        if (!is_array($Cartlist)) {
 
-		if(!is_array($Cartlist)){
+            $shop['num'] = 0;
 
-			$shop['num']=0;
+        } else {
 
-		}else{
+            $shop['num'] = count($Cartlist) - 1;
 
-			$shop['num']=count($Cartlist)-1;		
+        }
 
-		}	
+        $shop['sum'] = $MoenyCount;
 
-		$shop['sum']=$MoenyCount;
+        echo json_encode($shop);
 
-		echo json_encode($shop);
+    }
 
-	}
+    //获取购物车的商品数量ajax
 
-	//获取购物车的商品数量ajax
+    public function getnumber()
+    {
 
-	public function getnumber(){		
+        $Cartlist = json_decode(stripslashes($this->Cartlist), true);
 
-		$Cartlist=json_decode(stripslashes($this->Cartlist),true);
+        if (!is_array($Cartlist)) {
 
-		if(!is_array($Cartlist)){
+            echo 0;
 
-			echo 0;
+        } else {
 
-		}else{
+            echo count($Cartlist) - 1;
 
-			echo count($Cartlist)-1;		
+        }
 
-		}
+    }
 
-	}
 
-	
+    //购物车商品列表
 
-	//购物车商品列表
+    public function cartlist()
+    {
 
-	public function cartlist(){	
+        $Cartlist = $this->Cartlist;
 
-		$Cartlist=json_decode(stripslashes($this->Cartlist),true);		
 
-		$shopids='';	
+        $shoplist = [];
+        if (is_array($Cartlist)) {
 
-		if(is_array($Cartlist)){			
+            foreach ($Cartlist as $key => $val) {
 
-			foreach($Cartlist as $key => $val){
 
-				$shopids.=intval($key).',';				
+                $shoplist[] = rpc_mall_getGoodsInfo($key);
 
-			}
+            }
 
-			$shopids=str_replace(',0','',$shopids);
 
-			$shopids=trim($shopids,',');
+        }
 
-	
+        var_dump($shoplist);
 
-		}
+//        $shoplist = array();
+//
+//        if ($shopids != NULL) {
+//
+//            $shoplist = $this->db->GetList("SELECT * FROM `@#_shoplist` where `id` in($shopids)", array("key" => "id"));
+//
+//        }
 
-		$shoplist=array();
+        var_dump($shoplist);
+        $MoenyCount = 0;
 
-		if($shopids!=NULL){
+        $Cartshopinfo = '{';
 
-			$shoplist=$this->db->GetList("SELECT * FROM `@#_shoplist` where `id` in($shopids)",array("key"=>"id"));
+        if (count($shoplist) >= 1) {
 
-		}
+            foreach ($Cartlist as $key => $val) {
 
-		$MoenyCount=0;
+                $key = intval($key);
 
-		$Cartshopinfo='{';
+                if (isset($shoplist[$key])) {
 
-		if(count($shoplist)>=1){
+                    $shoplist[$key]['cart_gorenci'] = $val['num'] ? $val['num'] : 1;
 
-			foreach($Cartlist as $key => $val){
+                    $MoenyCount += $shoplist[$key]['yunjiage'] * $shoplist[$key]['cart_gorenci'];
 
-					$key=intval($key);					
+                    $shoplist[$key]['cart_xiaoji'] = substr(sprintf("%.3f", $shoplist[$key]['yunjiage'] * $val['num']), 0, -1);
 
-					if(isset($shoplist[$key])){									
+                    $shoplist[$key]['cart_shenyu'] = $shoplist[$key]['zongrenshu'] - $shoplist[$key]['canyurenshu'];
 
-						$shoplist[$key]['cart_gorenci']=$val['num'] ? $val['num'] : 1;						
+                    $Cartshopinfo .= "'$key':{'shenyu':" . $shoplist[$key]['cart_shenyu'] . ",'num':" . $val['num'] . ",'money':" . $shoplist[$key]['yunjiage'] . "},";
 
-						$MoenyCount+=$shoplist[$key]['yunjiage']*$shoplist[$key]['cart_gorenci'];
+                }
 
-						$shoplist[$key]['cart_xiaoji']=substr(sprintf("%.3f",$shoplist[$key]['yunjiage']*$val['num']),0,-1);					
+            }
 
-						$shoplist[$key]['cart_shenyu']=$shoplist[$key]['zongrenshu']-$shoplist[$key]['canyurenshu'];
+        }
 
-						$Cartshopinfo.="'$key':{'shenyu':".$shoplist[$key]['cart_shenyu'].",'num':".$val['num'].",'money':".$shoplist[$key]['yunjiage']."},";
+        $MoenyCount = substr(sprintf("%.3f", $MoenyCount), 0, -1);
 
-					}
+        $Cartshopinfo .= "'MoenyCount':$MoenyCount}";
 
-			}
+        include templates("cart", "cartlist");
 
-		}
+    }
 
-		$MoenyCount=substr(sprintf("%.3f",$MoenyCount),0,-1);	
+    //支付界面
 
-		$Cartshopinfo.="'MoenyCount':$MoenyCount}";		
+    public function pay()
+    {
 
-		include templates("cart","cartlist");
+//        return;
 
-	}
+        parent::__construct();
 
-	//支付界面
+        if (!$member = $this->userinfo) $this->HeaderLogin();
 
-	public function pay(){
 
+        $Cartlist = json_decode(stripslashes($this->Cartlist), true);
 
 
-		parent::__construct();	
+        $shopids = '';
 
-		if(!$member=$this->userinfo)$this->HeaderLogin();				
+        if (is_array($Cartlist)) {
 
-		
+            foreach ($Cartlist as $key => $val) {
 
-		$Cartlist=json_decode(stripslashes($this->Cartlist),true);
+                $shopids .= intval($key) . ',';
 
-		
+            }
 
-		
+            $shopids = str_replace(',0', '', $shopids);
 
-			
+            $shopids = trim($shopids, ',');
 
-		$shopids='';	
 
-		if(is_array($Cartlist)){			
+        }
 
-			foreach($Cartlist as $key => $val){
+        $shoplist = array();
 
-				$shopids.=intval($key).',';				
+        if ($shopids != NULL) {
 
-			}
+            $shoplist = $this->db->GetList("SELECT * FROM `@#_shoplist` where `id` in($shopids)", array("key" => "id"));
 
-			$shopids=str_replace(',0','',$shopids);
+        }
 
-			$shopids=trim($shopids,',');
+        $MoenyCount = 0;
 
-	
+        if (count($shoplist) >= 1) {
 
-		}
+            foreach ($Cartlist as $key => $val) {
 
-		$shoplist=array();
+                $key = intval($key);
 
-		if($shopids!=NULL){
+                if (isset($shoplist[$key])) {
 
-			$shoplist=$this->db->GetList("SELECT * FROM `@#_shoplist` where `id` in($shopids)",array("key"=>"id"));
+                    $shoplist[$key]['cart_gorenci'] = $val['num'] ? $val['num'] : 1;
 
-		}
+                    $MoenyCount += $shoplist[$key]['yunjiage'] * $shoplist[$key]['cart_gorenci'];
 
-		$MoenyCount=0;
+                    $shoplist[$key]['cart_xiaoji'] = substr(sprintf("%.3f", $shoplist[$key]['yunjiage'] * $val['num']), 0, -1);
 
-		if(count($shoplist)>=1){
+                    $shoplist[$key]['cart_shenyu'] = $shoplist[$key]['zongrenshu'] - $shoplist[$key]['canyurenshu'];
 
-			foreach($Cartlist as $key => $val){
+                }
 
-					$key=intval($key);					
+            }
 
-					if(isset($shoplist[$key])){		
+        } else {
 
-						$shoplist[$key]['cart_gorenci']=$val['num'] ? $val['num'] : 1;							
+            _setcookie('Cartlist', NULL);
 
-						$MoenyCount+=$shoplist[$key]['yunjiage']*$shoplist[$key]['cart_gorenci'];
+            _message("购物车没有商品!", WEB_PATH);
 
-						$shoplist[$key]['cart_xiaoji']=substr(sprintf("%.3f",$shoplist[$key]['yunjiage']*$val['num']),0,-1);					
+        }
 
-						$shoplist[$key]['cart_shenyu']=$shoplist[$key]['zongrenshu']-$shoplist[$key]['canyurenshu'];					
 
-					}
+        //总支付价格
 
-			}
+        $MoenyCount = substr(sprintf("%.3f", $MoenyCount), 0, -1);
 
-		}else{
+        //会员余额
 
-			_setcookie('Cartlist',NULL);
+        $Money = $member['money'];
 
-			_message("购物车没有商品!",WEB_PATH);
+        //商品数量
 
-		}	
+        $shoplen = count($shoplist);
 
-		
 
-		//总支付价格
+        $fufen = System::load_app_config("user_fufen");
 
-		$MoenyCount=substr(sprintf("%.3f",$MoenyCount),0,-1);
+        if ($fufen['fufen_yuan']) {
 
-		//会员余额
+            $fufen_dikou = intval($member['score'] / $fufen['fufen_yuan']);
 
-		$Money=$member['money'];
+        } else {
 
-		//商品数量
+            $fufen_dikou = 0;
 
-		$shoplen=count($shoplist);		
+        }
 
-		
+        $paylist = $this->db->GetList("SELECT * from `@#_pay` where `pay_start` = '1' AND `pay_mobile` != 1 ");
 
-		$fufen = System::load_app_config("user_fufen");
+        $cookies = base64_encode($this->Cartlist);
 
-		if($fufen['fufen_yuan']){
 
-			$fufen_dikou = intval($member['score'] / $fufen['fufen_yuan']);
+        session_start();
 
-		}else{
+        $_SESSION['submitcode'] = $submitcode = uniqid();
 
-			$fufen_dikou = 0;
 
-		}
+        include templates("cart", "pay");
 
-		$paylist = $this->db->GetList("SELECT * from `@#_pay` where `pay_start` = '1' AND `pay_mobile` != 1 ");
+    }
 
-		$cookies = base64_encode($this->Cartlist);
 
-		
+    //开始支付
 
-		session_start();
+    public function paysubmit()
+    {
 
-		$_SESSION['submitcode'] = $submitcode = uniqid();
+        if (!isset($_POST['submit'])) {
 
-		
+            _message("正在返回购物车...", WEB_PATH . '/member/cart/cartlist');
 
-		include templates("cart","pay");
+            exit;
 
-	}
+        }
 
-	
 
-	//开始支付
+        session_start();
 
-	public function paysubmit(){
+        if (isset($_POST['submitcode'])) {
 
-		if(!isset($_POST['submit'])){	
+            if (isset($_SESSION['submitcode'])) {
 
-			_message("正在返回购物车...",WEB_PATH.'/member/cart/cartlist');
+                $submitcode = $_SESSION['submitcode'];
 
-			exit;
+            } else {
 
-		}	
+                $submitcode = null;
 
-		
+            }
 
-		session_start();		
+            if ($_POST['submitcode'] == $submitcode) {
 
-		if(isset($_POST['submitcode'])) {
+                unset($_SESSION["submitcode"]);
 
-			if(isset($_SESSION['submitcode'])){
+            } else {
 
-				$submitcode = $_SESSION['submitcode'];
+                _message("请不要重复提交...", WEB_PATH . '/member/cart/cartlist');
 
-			}else{
+            }
 
-				$submitcode = null;
+        } else {
 
-			}		
+            _message("正在返回购物车...", WEB_PATH . '/member/cart/cartlist');
 
-			if($_POST['submitcode'] == $submitcode){			
+        }
 
-				unset($_SESSION["submitcode"]);      
 
-			}else{				
+        parent::__construct();
 
-				_message("请不要重复提交...",WEB_PATH.'/member/cart/cartlist');
+        if (!$this->userinfo) $this->HeaderLogin();
 
-			}	
+        $uid = $this->userinfo['uid'];
 
-		}else{
 
-			_message("正在返回购物车...",WEB_PATH.'/member/cart/cartlist');
+        $pay_checkbox = isset($_POST['moneycheckbox']) ? true : false;
 
-		}
+        $pay_type_bank = isset($_POST['pay_bank']) ? $_POST['pay_bank'] : false;
 
-	
+        $pay_type_id = isset($_POST['account']) ? $_POST['account'] : false;
 
-	
 
-		parent::__construct();	
+        if (isset($_POST['shop_score'])) {
 
-		if(!$this->userinfo)$this->HeaderLogin();
+            $fufen_cfg = System::load_app_config("user_fufen", '', 'member');
 
-		$uid = $this->userinfo['uid'];
+            $fufen = intval($_POST['shop_score_num']);
 
-		
+            if ($fufen_cfg['fufen_yuan']) {
 
-				
+                $fufen = intval($fufen / $fufen_cfg['fufen_yuan']);
 
-		$pay_checkbox=isset($_POST['moneycheckbox']) ? true : false;	
+                $fufen = $fufen * $fufen_cfg['fufen_yuan'];
 
-		$pay_type_bank=isset($_POST['pay_bank']) ? $_POST['pay_bank'] : false;
+            }
 
-		$pay_type_id=isset($_POST['account']) ? $_POST['account'] : false;
+        } else {
 
-		
+            $fufen = 0;
 
-		
+        }
 
-		if(isset($_POST['shop_score'])){
+        /************start*************/
 
-			$fufen_cfg = System::load_app_config("user_fufen",'','member');	
+        $Cartlist = json_decode(stripslashes($this->Cartlist), true);
 
-			$fufen = intval($_POST['shop_score_num']);			
+        $pay = System::load_app_class('pay', 'pay');
 
-			if($fufen_cfg['fufen_yuan']){				
+        //$pay->scookie = json_decode(base64_decode($_POST['cookies']));
 
-				$fufen = intval($fufen / $fufen_cfg['fufen_yuan']);
 
-				$fufen = $fufen * $fufen_cfg['fufen_yuan'];
+        $pay->fufen = $fufen;
 
-			}			
+        $pay->pay_type_bank = $pay_type_bank;
 
-		}else{
+        $ok = $pay->init($uid, $pay_type_id, 'go_record');    //云购商品
 
-			$fufen = 0;
 
-		}		
+        if ($ok !== 'ok') {
 
-		/************start*************/
+            $_COOKIE['Cartlist'] = NULL;
 
-		$Cartlist=json_decode(stripslashes($this->Cartlist),true);
+            _setcookie("Cartlist", null);
 
-		$pay=System::load_app_class('pay','pay');
+            _message($ok, G_WEB_PATH);
 
-		//$pay->scookie = json_decode(base64_decode($_POST['cookies']));
+        }
 
-			
+        $check = $pay->go_pay($pay_checkbox);
 
-		$pay->fufen = $fufen;
+        if ($check === 'not_pay') {
 
-		$pay->pay_type_bank = $pay_type_bank;
+            _message('未选择支付平台!', WEB_PATH . '/member/cart/cartlist');
 
-		$ok = $pay->init($uid,$pay_type_id,'go_record');	//云购商品	
+        }
 
+        if (!$check) {
 
+            _message("商品支付失败!", WEB_PATH . '/member/cart/cartlist');
 
-		if($ok !== 'ok'){
+        }
 
-			$_COOKIE['Cartlist'] = NULL;
+        if ($check) {
 
-			_setcookie("Cartlist",null);
+            //成功
 
-			_message($ok,G_WEB_PATH);
+            header("location: " . WEB_PATH . "/member/cart/paysuccess");
 
-		}
+        } else {
 
-		$check = $pay->go_pay($pay_checkbox);
+            //失败
 
-		if($check === 'not_pay'){
+            $_COOKIE['Cartlist'] = NULL;
 
-			_message('未选择支付平台!',WEB_PATH.'/member/cart/cartlist');
+            _setcookie("Cartlist", null);
 
-		}
+            header("location: " . WEB_PATH);
 
-		if(!$check){
+        }
 
-			_message("商品支付失败!",WEB_PATH.'/member/cart/cartlist');
+        exit;
 
-		}
+    }
 
-		if($check){
 
-			//成功
+    //成功页面
 
-			header("location: ".WEB_PATH."/member/cart/paysuccess");
+    public function paysuccess()
+    {
 
-		}else{
+        $_COOKIE['Cartlist'] = NULL;
 
-			//失败	
+        _setcookie("Cartlist", null);
 
-			$_COOKIE['Cartlist'] = NULL;
+        include templates("cart", "paysuccess");
 
-			_setcookie("Cartlist",null);
+    }
 
-			header("location: ".WEB_PATH);
 
-		}		
+    //充值
 
-		exit;
+    public function addmoney()
+    {
 
-	}
+        parent::__construct();
 
-	
+        if (!isset($_POST['submit'])) {
 
-	//成功页面
+            _message("正在返回充值页面...", WEB_PATH . '/member/member/home/userrecharge');
 
-	public function paysuccess(){	
+            exit;
 
-		$_COOKIE['Cartlist'] = NULL;
+        }
 
-		_setcookie("Cartlist",null);
+        if (!$this->userinfo) $this->HeaderLogin();
 
-		include templates("cart","paysuccess");		
+        $pay_type_bank = isset($_POST['pay_bank']) ? $_POST['pay_bank'] : false;
 
-	}
+        $pay_type_id = isset($_POST['account']) ? $_POST['account'] : false;
 
-	
+        $money = intval($_POST['money']);
 
-	//充值
+        $uid = $this->userinfo['uid'];
 
-	public function addmoney(){
+        $pay = System::load_app_class('pay', 'pay');
 
-		parent::__construct();	
+        $pay->pay_type_bank = $pay_type_bank;
 
-		if(!isset($_POST['submit'])){	
+        $ok = $pay->init($uid, $pay_type_id, 'addmoney_record', $money);
 
-			_message("正在返回充值页面...",WEB_PATH.'/member/member/home/userrecharge');
+        if ($ok === 'not_pay') {
 
-			exit;
+            _message("未选择支付平台");
 
-		}	
+        }
 
-		if(!$this->userinfo)$this->HeaderLogin();		
 
-		$pay_type_bank=isset($_POST['pay_bank']) ? $_POST['pay_bank'] : false;
+    }
 
-		$pay_type_id=isset($_POST['account']) ? $_POST['account'] : false;		
 
-		$money=intval($_POST['money']);		
+    //加入购物车异步获取信息
 
-		$uid = $this->userinfo['uid'];
+    public function Fastpay()
+    {
 
-		$pay=System::load_app_class('pay','pay');
+        if ($_GET['shopid']) {
 
-		$pay->pay_type_bank = $pay_type_bank;
+            $id = $_GET['shopid'];
 
-		$ok = $pay->init($uid,$pay_type_id,'addmoney_record',$money);
+            $shoplist = $this->db->GetOne("SELECT zongrenshu,canyurenshu,yunjiage as price, title as cg_title FROM `@#_shoplist` where `id` = $id");
 
-		if($ok === 'not_pay'){
+            //用户账户金额
 
-			_message("未选择支付平台");
+            $uid = _encrypt(_getcookie('uid'), 'DECODE');
 
-		}
+            if (empty($uid)) {
 
+                $shoplist['umoney'] = '未登录';
 
+                $shoplist['ustatus'] = '0';
 
-		
+            } else {
 
-	}
+                $money = $this->db->GetOne("SELECT `money` FROM `@#_member` where `uid` = $uid");
 
+                $shoplist['umoney'] = $money['money'];
 
+                $shoplist['ustatus'] = '1';
 
-	//加入购物车异步获取信息
+            }
 
-	public function Fastpay(){
+            echo json_encode($shoplist);
 
-		if($_GET['shopid']){
+        }
 
-			$id = $_GET['shopid'];
+    }
 
-			$shoplist=$this->db->GetOne("SELECT zongrenshu,canyurenshu,yunjiage as price, title as cg_title FROM `@#_shoplist` where `id` = $id");
 
-			//用户账户金额
+    //快速异步支付信息
 
-			$uid=_encrypt(_getcookie('uid'),'DECODE');
+    public function Fastpaysubmit()
+    {
 
-			if(empty($uid)){
+        parent::__construct();
 
-				$shoplist['umoney'] = '未登录';
+        if (!$this->userinfo) $this->HeaderLogin();
 
-				$shoplist['ustatus'] ='0';
+        $uid = $this->userinfo['uid'];
 
-			}else{
+        $pay_checkbox = false;
 
-				$money=$this->db->GetOne("SELECT `money` FROM `@#_member` where `uid` = $uid");
+        $pay_type_bank = false;
 
-				$shoplist['umoney'] = $money['money'];
+        $pay_type_id = false;
 
-				$shoplist['ustatus'] ='1';
+        $var = $_POST;
 
-			}
+        // 组合购物车数组
 
-			echo json_encode($shoplist);
+        $arr['shenyu'] = $var['shenyu'];
 
-		}
+        $shopnum = $var['num'];
 
-	}
+        $arr['money'] = $var['money'];
 
+        $shopid = $var['shopid'];
 
+        /************start*************/
 
+        $pay = System::load_app_class('pay', 'pay');
 
 
-	//快速异步支付信息
+        $rs = $pay->pay_user_go_shop($uid, $shopid, $shopnum);
 
-	public function Fastpaysubmit(){
+        if ($rs) {    //成功
+            $message = array('error' => '您已经支付成功');
 
-		parent::__construct();	
+            echo json_encode($message);
+            exit;
 
-				if(!$this->userinfo)$this->HeaderLogin();
+        }
 
-				$uid = $this->userinfo['uid'];	
 
-				$pay_checkbox= false;	
-
-				$pay_type_bank= false;
-
-				$pay_type_id= false;
-
-				$var = $_POST;
-
-				// 组合购物车数组
-
-				$arr['shenyu'] = $var['shenyu'];
-
-				$shopnum = $var['num'];
-
-				$arr['money'] = $var['money'];
-
-				$shopid = $var['shopid'];
-
-				/************start*************/
-
-				$pay=System::load_app_class('pay','pay');
-
-
-				$rs  = $pay->pay_user_go_shop($uid,$shopid,$shopnum);
-
-				if($rs){	//成功
-						$message = array('error'=>'您已经支付成功');
-
-						echo json_encode($message);
-					exit;
-
-		}
-
-				
-
-	}
-
-
-
+    }
 
 
 }

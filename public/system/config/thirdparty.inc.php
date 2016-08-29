@@ -5,7 +5,7 @@ return array(
         'appid' => '2479687343',
         'secret' => '48681c45e835532d0ea8ea0fe923cecd',
         'url' => 'https://api.weibo.com/',
-        'redirecturi' => "http://onerollweibo.tomatofuns.com/"
+        'redirecturi' => "http://onerollweibo.tomatofuns.com/mobile/mobile/auth"
     ),
 );
 ?>

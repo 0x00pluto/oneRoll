@@ -1,8 +1,8 @@
-$(function() {
+$(function () {
 
     var a = false;
 
-    var b = function() {
+    var b = function () {
 
         var x = parseInt($("#hidShopMoney").val());
 
@@ -26,16 +26,15 @@ $(function() {
 
         //var g = parseInt(t / 100) > x ? x: parseInt(t / 100);
 
-        var g = ffdk > x ? x: ffdk;
+        var g = ffdk > x ? x : ffdk;
 
         var w = 0;
 
         var e = 0;
 
-		var checkpay='nosel';//选择支付方式
+        var checkpay = 'nosel';//选择支付方式
 
-		var banktype='nobank';
-
+        var banktype = 'nobank';
 
 
         if (g < x) {
@@ -67,8 +66,7 @@ $(function() {
         }
 
 
-
-        var q = function(y) {
+        var q = function (y) {
 
             g = y;
 
@@ -78,9 +76,9 @@ $(function() {
 
                 c.attr("sel", "1").attr("class", "z-pay-mentsel").next("span").html('积分支付<em class="orange">' + y + ".00</em>元（您的积分：" + t + "）")
 
-				checkpay='fufen';
+                checkpay = 'fufen';
 
-				banktype='nobank';
+                banktype = 'nobank';
 
             } else {
 
@@ -90,8 +88,7 @@ $(function() {
 
         };
 
-        var f = function(y) {
-
+        var f = function (y) {
 
 
             w = y;
@@ -99,50 +96,49 @@ $(function() {
             if (y > 0) {
 
 
-
                 p.parent().removeClass("z-pay-grayC");
 
-                p.attr("sel", "1").attr("class", "z-pay-mentsel").next("span").html('余额支付<em class="orange">' + y + ".00</em>元（账户余额：" + d + " 元）")
+                p.attr("sel", "1").attr("class", "z-pay-mentsel").next("span").html('余额支付<em class="orange" style="color: #ff2d46">' + y + ".00</em>元（账户余额：" + d + " 元）")
 
-				checkpay='money';
+                checkpay = 'money';
 
-				banktype='nobank';
+                banktype = 'nobank';
 
             } else {
 
-                p.attr("sel", "0").attr("class", "z-pay-ment").next("span").html('余额支付<em class="orange">0.00</em>元（账户余额：' + d + " 元）")
+                p.attr("sel", "0").attr("class", "z-pay-ment").next("span").html('余额支付<em class="orange" style="color: #ff2d46">0.00</em>元（账户余额：' + d + " 元）")
 
             }
 
         };
 
-        var k = function(y) {
+        var k = function (y) {
 
             e = y;
 
             if (y > 0) {
 
-                h.html('<s class="z-arrow"></s>选择' + (r == "网银" ? "网银": '<b class="z-mlr">' + r + "</b>") + "支付" + ((g > 0 || w > 0) ? "剩余": "") + '<em class="orange">' + e + ".00</em>元");
+                h.html('<s class="z-arrow"></s>选择' + (r == "网银" ? "网银" : '<b class="z-mlr">' + r + "</b>") + "支付" + ((g > 0 || w > 0) ? "剩余" : "") + '<em class="orange" style="color: #ff2d46">' + e + ".00</em>元");
 
                 h.removeClass("z-pay-grayC").nextAll().show();
 
                 o = true
 
-				checkpay='bank'
+                checkpay = 'bank'
 
-				if(r=='建设银行'){
+                if (r == '建设银行') {
 
-				  banktype='CCB-WAP';
+                    banktype = 'CCB-WAP';
 
-				}else if(r=='支付方式'){
+                } else if (r == '支付方式') {
 
-				  banktype='wxpay_wap';
+                    banktype = 'wxpay_wap';
 
-				}else if(r=='工商银行'){
+                } else if (r == '工商银行') {
 
-				  banktype='ICBC-WAP';
+                    banktype = 'ICBC-WAP';
 
-				}
+                }
 
             } else {
 
@@ -156,7 +152,7 @@ $(function() {
 
         if (ffdk > 0) {
 
-            c.parent().click(function() {
+            c.parent().click(function () {
 
                 k(0);
 
@@ -172,7 +168,7 @@ $(function() {
 
                     if (y > 0) {
 
-                        q(y >= x ? x: y);
+                        q(y >= x ? x : y);
 
                         n(y >= x ? 0 : x - y)
 
@@ -186,7 +182,7 @@ $(function() {
 
             });
 
-            var n = function(z) {
+            var n = function (z) {
 
                 if (p.attr("sel") == 1) {
 
@@ -200,7 +196,7 @@ $(function() {
 
                         f(parseInt(d));
 
-                        k( - y)
+                        k(-y)
 
                     }
 
@@ -216,8 +212,7 @@ $(function() {
 
         if (parseInt(d) > 0) {
 
-            p.parent().click(function() {
-
+            p.parent().click(function () {
 
 
                 k(0);
@@ -234,7 +229,7 @@ $(function() {
 
                     if (y > 0) {
 
-                        f(y >= x ? x: y);
+                        f(y >= x ? x : y);
 
                         l(y >= x ? 0 : x - y)
 
@@ -248,7 +243,7 @@ $(function() {
 
             });
 
-            var l = function(z) {
+            var l = function (z) {
 
                 if (c.attr("sel") == 1) {
 
@@ -262,7 +257,7 @@ $(function() {
 
                         q(ffdk);
 
-                        k( - y)
+                        k(-y)
 
                     }
 
@@ -280,17 +275,16 @@ $(function() {
 
         var v = 1;
 
-        $("li", m).each(function(y) {
+        $("li", m).each(function (y) {
 
             var z = $(this);
-
 
 
             if (y == 0) {
 
                 h = z;
 
-                h.click(function() {
+                h.click(function () {
 
                     if (!h.hasClass("z-pay-grayC")) {
 
@@ -314,7 +308,7 @@ $(function() {
 
             } else {
 
-                z.click(function() {
+                z.click(function () {
 
                     v = y;
 
@@ -322,47 +316,47 @@ $(function() {
 
                     z.children("i").attr("class", "z-bank-Roundsel");
 
-                    z.siblings().each(function() {
+                    z.siblings().each(function () {
 
                         $(this).children("i").attr("class", "z-bank-Round")
 
                     });
 
-                    h.html('<s class="z-arrow"></s>选择<b class="z-mlr">' + r + "</b>支付" + ((g > 0 || w > 0) ? "剩余": "") + '<em class="orange">' + e + ".00</em>元")
+                    h.html('<s class="z-arrow"></s>选择<b class="z-mlr">' + r + "</b>支付" + ((g > 0 || w > 0) ? "剩余" : "") + '<em class="orange">' + e + ".00</em>元")
 
-					checkpay='bank'
+                    checkpay = 'bank'
 
-					//banktype=r;
+                    //banktype=r;
 
-				if(r=='建设银行'){
+                    if (r == '建设银行') {
 
-				  banktype='CCB-WAP';
+                        banktype = 'CCB-WAP';
 
-				}else if(r=='支付方式'){
+                    } else if (r == '支付方式') {
 
-				  banktype='wxpay_wap';
+                        banktype = 'wxpay_wap';
 
-				}else if(r=='工商银行'){
+                    } else if (r == '工商银行') {
 
-				  banktype='ICBC-WAP';
+                        banktype = 'ICBC-WAP';
 
-				}
+                    }
 
                 })
-             z.trigger("click");           
+                z.trigger("click");
             }
 
         });
 
         if (e > 0) {
 
-            h.removeClass("z-pay-grayC").html('<s class="z-arrow"></s>选择<b class="z-mlr">' + r + "</b>支付" + ((g > 0 || w > 0) ? "剩余": "") + '<em class="orange">' + e + ".00</em>元").nextAll().show();
+            h.removeClass("z-pay-grayC").html('<s class="z-arrow"></s>选择<b class="z-mlr">' + r + "</b>支付" + ((g > 0 || w > 0) ? "剩余" : "") + '<em class="orange">' + e + ".00</em>元").nextAll().show();
 
             o = true
 
-			banktype='wxpay_wap';
+            banktype = 'wxpay_wap';
 
-			checkpay='bank'
+            checkpay = 'bank'
 
         } else {
 
@@ -374,46 +368,44 @@ $(function() {
 
         var s = $("#btnPay");
 
-        var u = function() {
+        var u = function () {
 
-        	var payment = $('.z-bank-Roundsel').length;
+            var payment = $('.z-bank-Roundsel').length;
 
-        	if (payment) {
+            if (payment) {
 
-        		banktype = $('.z-bank-Roundsel').parent('li').attr('urm');
-        	}
-
-
-
-			var submitcode = Path.submitcode
-
-			if(!this.cc){
-
-				this.cc = 1;
-
-			}else{
-
-				alert("不可以重复提交订单!")
-
-				return false;
-
-			}
+                banktype = $('.z-bank-Roundsel').parent('li').attr('urm');
+            }
 
 
+            var submitcode = Path.submitcode
 
-            if(checkpay=='nosel' && banktype=='nobank'){
+            if (!this.cc) {
 
-			  alert("请选择一种支付方式！");
+                this.cc = 1;
 
-			  if(this.cc){
+            } else {
 
-				this.cc = false;
+                alert("不可以重复提交订单!")
 
-			  }
+                return false;
 
-			  return
+            }
 
-			}
+
+            if (checkpay == 'nosel' && banktype == 'nobank') {
+
+                alert("请选择一种支付方式！");
+
+                if (this.cc) {
+
+                    this.cc = false;
+
+                }
+
+                return
+
+            }
 
             if (!a) {
 
@@ -427,37 +419,40 @@ $(function() {
 
                 s.unbind("click").addClass("dis");
 
-			    if (shopnum != -1) {
+                if (shopnum != -1) {
 
-					if (shopnum == 0) {
+                    if (shopnum == 0) {
 
-						location.replace(Gobal.Webpath+"/mobile/cart/paysubmit/"+checkpay+"/"+banktype+"/"+x+"/"+t+"/"+submitcode)
+                        var url = Gobal.Webpath + "/mobile/cart/paysubmit/" + checkpay + "/" + banktype + "/" + x + "/" + t + "/" + submitcode;
+                        console.log(url);
 
-					} else {
+                        location.replace(url)
 
-						if (shopnum == 1) {
+                    } else {
 
-							alert("亲，您的购物车中没有商品哦，去选购一些吧。");
+                        if (shopnum == 1) {
 
-							location.replace(Gobal.Webpath+"/mobile/cart/cartlist")
+                            alert("亲，您的购物车中没有商品哦，去选购一些吧。");
 
-						} else {
+                            location.replace(Gobal.Webpath + "/mobile/cart/cartlist")
 
-							if (shopnum == 10) {
+                        } else {
 
-								location.reload()
+                            if (shopnum == 10) {
 
-							}
+                                location.reload()
 
-						}
+                            }
 
-					}
+                        }
 
-				}
+                    }
 
-				s.bind("click", u).removeClass("dis");
+                }
 
-				a = true
+                s.bind("click", u).removeClass("dis");
+
+                a = true
 
             } else {
 
@@ -465,7 +460,7 @@ $(function() {
 
                     if (v == 1 || v == 2 || v == 3) {
 
-                           location.href = Gobal.Webpath+"/mobile/cart/paysubmit/"+checkpay+"/"+banktype+"/"+x+"/"+t
+                        location.href = Gobal.Webpath + "/mobile/cart/paysubmit/" + checkpay + "/" + banktype + "/" + x + "/" + t
 
                     }
 

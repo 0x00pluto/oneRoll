@@ -167,8 +167,9 @@ class arrayAdapter extends \ArrayObject implements \JsonSerializable
 
         $key = $this->getOriginKey($key);
 
-        $value = $this->getAttributeFromArray($key);
 
+
+        $value = $this->getAttributeFromArray($key);
         // If the attribute has a get mutator, we will call that then return what
         // it returns as the value, which is useful for transforming values on
         // retrieval from the model to a form that is more useful for usage.

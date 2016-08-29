@@ -342,9 +342,9 @@ a.z-cartBtn {
     color: #fff;
     font-size: 14px;
     line-height: 33px;
-    border: 1px solid #f60;
-    box-shadow: 0 1px 2px #f60;
-    background: #f60;
+    border: 1px solid #ff2d46;
+    box-shadow: 0 1px 2px #ff2d46;
+    background: #ff2d46;
 }
 
 .u-Btn a.z-ShoppingBtn {
@@ -371,17 +371,18 @@ a.z-cartBtn {
     display: block;
     width: 100%;
     -webkit-box-sizing: border-box;
-    height: 35px;
-    line-height: 40px;
+    height: 30px;
+    line-height: 30px;
     text-align: center;
     color: #fff!important;
-    border-radius: 5px;
-    font-size: 18px;
+    border-radius: 30px;
+    font-size: 14px;
     margin-right: 10px;
+    letter-spacing: 1px;
 }
 
 a.orgBtn {
-    background: #f60;
+    background: #ff2d46;
 }
 
 a.grayBtn {
@@ -513,8 +514,8 @@ a.grayBtn {
 
 .header {
     height: 49px;
-    background: #ff6600;
-    border-bottom: 1px solid #e35b00;
+    background: #FF2D46;
+    border-bottom: 1px solid #FF2D46;
 }
 
 .header h1 {
@@ -559,7 +560,7 @@ a.grayBtn {
     height: 30px;
     overflow: hidden;
     position: absolute;
-    left: 5px;
+    right: 1rem;
     top: 10px;
     width: 30px;
     background-size: 20px auto;
@@ -953,12 +954,15 @@ a.z-Site {
 }
 
 .u-progress {
-    height: 5px;
-    background: #e7e7e7;
-    position: relative;
+    height: 8px;
+    background: transparent;
+    /*position: relative;*/
     border-radius: 3px;
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
+    /*box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);*/
     overflow: hidden;
+    border: 1px solid #e0e0e0;
+    margin-top: 5px;
+
 }
 
 .u-progress .pgbar,
@@ -968,26 +972,31 @@ a.z-Site {
     height: 100%;
     border-radius: 3px;
 }
-
 .u-progress .pging {
-    background: #f60;
+    background: #FFE156;
 }
 
+.Progress-bar
+.Progress-bar .Pro-bar-li
+{
+    padding: 0;
+}
 .Progress-bar .Pro-bar-li li {
     float: left;
-    color: #646464;
-    font-size: 10px;
+    color: #666666;
+    font-size: 12px;
     font-family: Microsoft YaHei,宋体;
     border: none;
     margin: 0;
     padding: 0;
     box-shadow: none;
     border-radius: none;
+    display: inline;
 }
 
 .Progress-bar .Pro-bar-li li em {
     /*display: block;*/
-    font-size: 10px;
+    font-size: 12px;
     font-family: Microsoft YaHei,arial;
     height: 14px;
     padding: 3px 0 0 0;
@@ -995,15 +1004,13 @@ a.z-Site {
 }
 
 .Progress-bar .Pro-bar-li li.P-bar01 em {
-    color: #f60;
 }
 
 .Progress-bar .Pro-bar-li li.P-bar02 em {
-    color: #777;
 }
 
 .Progress-bar .Pro-bar-li li.P-bar03 em {
-    color: #2AF;
+    color: #6bcad9;
 }
 
 .Progress-bar .Pro-bar-li li.P-bar01 {
@@ -1012,12 +1019,12 @@ a.z-Site {
 }
 
 .Progress-bar .Pro-bar-li li.P-bar02 {
-    width: 10%;
+    /*width: 2%;*/
     text-align: center;
 }
 
 .Progress-bar .Pro-bar-li li.P-bar03 {
-    width: 40%;
+    width: 50%;
     float: right;
     text-align: right;
 }
@@ -1152,7 +1159,7 @@ a.loading {
     width: 150px;
     height: 150px;
     margin: 0 auto;
-    background-size:150px 150px; 
+    background-size:150px 150px;
 }
 .haveNot .guangguang{
 	display: block;

@@ -1,6 +1,6 @@
-$(function() {
+$(function () {
 
-    var a = function() {
+    var a = function () {
 
         var b = $("#divOrderLoading");
 
@@ -24,149 +24,129 @@ $(function() {
 
         var e = false;
 
-        var d = function() {
+        var d = function () {
 
-            var j = function() {
+            var j = function () {
 
                 return "/" + c.FIdx + "/" + c.EIdx + "/" + c.isCount
 
             };
 
-            var k = function() {
+            var k = function () {
 
                 h.hide();
 
-                b.show();				 
+                b.show();
 
-               // GetJPData("http://m.1yyg.com", "getUserOrderList", j(),
+                // GetJPData("http://m.1yyg.com", "getUserOrderList", j(),
 
-			    GetJPData(Gobal.Webpath, "shopajax", "getUserOrderList"+j(),
+                console.log("getUserOrderList" + j());
 
-                function(p) {				 
+                GetJPData(Gobal.Webpath, "shopajax", "getUserOrderList" + j(),
 
-                    if (p.code == 0) {
+                    function (p) {
 
-                        if (c.isCount == 1) {
+                        console.log(p);
+                        if (p.code == 0) {
 
-                            c.isCount = 0;
+                            if (c.isCount == 1) {
 
-                            f = p.count
+                                c.isCount = 0;
 
-                        }
+                                f = p.count
 
-                        var o = p.listItems;
+                            }
 
-                        var n = o.length;
+                            var o = p.listItems;
 
-                        var m = "";
+                            var n = o.length;
 
-						
+                            var m = "";
 
-                        for (var l = 0; l < n; l++) {						 
 
-                            m += "<li onclick=\"location.href='"+Gobal.Webpath+"/mobile/user/buyDetail/" + o[l].shopid +'\'"><a class="fl z-Limg" href="'+Gobal.Webpath+'/mobile/mobile/item/' + o[l].shopid +'"><img src="' + Gobal.LoadPic + '" src2="'+Gobal.imgpath+'/uploads/' + o[l].thumb + '" border=0 alt=""/></a><div class="u-gds-r gray9"><p class="z-gds-tt"><a href="'+Gobal.Webpath+'/mobile/mobile/item/' + o[l].shopid +'" class="gray6">(第' + o[l].qishu + "期)" + o[l].shopname + '</a></p><p>幸运码：<em class="orange">' + o[l].q_user_code + "</em></p><p style='margin:0px;'>揭晓时间：" + o[l].q_end_time + "</p>";
+                            for (var l = 0; l < n; l++) {
 
-                            var q = parseInt(o[l].orderState);
+                                m += '<li onclick="location.href="' + Gobal.Webpath + '/mobile/user/buyDetail/' + o[l].id + '">' +
+                                    '<div style="display: block; clear: both;height: 120px">' +
+                                    '<div class="u-gds-l">' +
+                                    '<a class="fl z-Limg" href="' + Gobal.Webpath + '/mobile/user/buyDetail/' + o[l].id + '">' +
+                                    '<img src="' + Gobal.LoadPic + '" src2="' + Gobal.imgpath + '/uploads/' + o[l].thumb + '" border=0 alt=""/></a>' +
+                                    '</div>' +
+                                    '<div class="u-gds-r">' +
+                                    '<p class="z-gds-tt">' +
+                                    '<a href="' + Gobal.Webpath + '/mobile/mobile/item/' + o[l].shopid + '" class="gray6">' +
+                                    o[l].title + '</a></p>' +
+                                    '<p>期号: ' + o[l].qishu + '</p>' +
+                                    '<p>总需人次: ' + o[l].zongrenshu + '</p>' +
+                                    '<p>本期参与: ' + o[l].zongrenshu + '</p>' +
+                                    "<p>揭晓时间: " + FormatTimeToYYYYMMDDHHMMSS(o[l].q_end_time) + "</p>";
 
-                            /*if (q == 1) {
+                                // var q = parseInt(o[l].orderState);
 
-                                m += '<a href="orderdetail-' + o[l].orderNo + '.html"  class="z-gds-btn">完善收货地址</a>'
+                                var record = o[l].record;
 
-                            } else {
+                                m += '</div>';
+                                m += '</div>';
+                                m += '<div class="optionDiv">';
 
-                                if (q == 2) {
-
-                                    m += '<a href="javascript:void(0);" class="z-gds-btn z-gds-btnDis">正在备货</a>'
-
-                                } else {
-
-                                    if (q == 3) {
-
-                                        m += '<a href="javascript:void(0);" class="z-gds-btn z-gds-btnDis">已发货</a><a  href="orderdetail-' + o[l].orderNo + '.html" class="z-gds-btn">确认收货</a>'
-
-                                    } else {
-
-                                        if (q == 10) {
-
-                                            if (parseInt(o[l].IsPostSingle) == 0) {
-
-                                                m += '<a href="javascript:void(0);" class="z-gds-btn z-gds-btnDis">订单已完成</a><a href="javascript:void(0);" class="z-gds-btn z-gds-btnDis">已晒单</a>'
-
-                                            } else {
-
-                                                m += '<a href="javascript:void(0);" class="z-gds-btn z-gds-btnDis">订单已完成</a><a href="postSingle-' + o[l].codeID + '.html" class="z-gds-btn">去晒单</a>'
-
-                                            }
-
-                                        } else {
-
-                                            if (q == 11) {
-
-                                                m += '<a href="javascript:void(0);" class="z-gds-btn z-gds-btnDis">订单已取消</a>'
-
-                                            }
-
-                                        }
-
-                                    }
-
+                                if (record.status == 1) {
+                                    m += '<a>确认收货地址</a>'
                                 }
 
-                            }*/
 
-                            m += '</div><b class="z-arrow"></b></li>'
+                                m += '</div><div style="display: block; height: 10px;background-color: #F1F1F1;border-top: 1px solid #DDD;border-top: 1px solid #DDD"></div></li>'
 
-                        }
+                            }
 
-                        if (c.FIdx > 0) {
+                            if (c.FIdx > 0) {
 
-                            b.prev().removeClass("bornone")
+                                b.prev().removeClass("bornone")
 
-                        }
+                            }
 
-                        b.before(m).prev().addClass("bornone");						
+                            b.before(m).prev().addClass("bornone");
 
-                        if (c.EIdx < f) {
+                            if (c.EIdx < f) {
 
-                            e = false;
+                                e = false;
 
-                            h.show()
+                                h.show()
 
-                        }
+                            }
 
-                        loadImgFun()
-
-                    } else {
-
-                        if (p.code == 10) {
-
-                            location.reload()
+                            loadImgFun()
 
                         } else {
 
-                            if (c.FIdx == 0) {
+                            if (p.code == 10) {
 
-                                b.before(Gobal.NoneHtml)
+                                location.reload()
+
+                            } else {
+
+                                if (c.FIdx == 0) {
+
+                                    b.before(Gobal.NoneHtml)
+
+                                }
 
                             }
 
                         }
 
-                    }
+                        b.hide()
 
-                    b.hide()
-
-                })
+                    })
 
             };
 
-            this.getInitPage = function() {
+            this.getInitPage = function () {
 
                 k()
 
             };
 
-            this.getNextPage = function() {
+            this.getNextPage = function () {
 
                 c.FIdx += i;
 
@@ -178,7 +158,7 @@ $(function() {
 
         };
 
-        h.click(function() {
+        h.click(function () {
 
             if (!e) {
 

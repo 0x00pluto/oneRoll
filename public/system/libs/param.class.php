@@ -43,10 +43,11 @@ class param
             return;
         }
 
-        if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
-            $this->prourlexp('query');
-            return;
-        }
+//        if (isset($_SERVER['QUERY_STRING']) && !empty($_SERVER['QUERY_STRING'])) {
+//            $this->prourlexp('query');
+//            return;
+//        }
+
         if (isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] != '/') {
             $this->prourlexp('REQUEST_URI');
             return;
@@ -88,13 +89,19 @@ class param
                 if (stripos($path, $this->expstr) === false) {
                     $this->route_url[1] = $path;
                 }
+
+//                var_dump($path);
                 break;
 
             case 'REQUEST_URI':
                 $path = $_SERVER['REQUEST_URI'];
                 $path = ltrim($path, '/');
                 $path = preg_replace("/^index.php\//i", '', $path);
+                $path = str_replace("?","/",$path);
+//                $path = preg_replace("?", '/', $path);
                 $path = rtrim($path, $this->expstr);
+
+//                var_dump($_SERVER);
                 if (stripos($path, $this->expstr) === false) {
                     $this->route_url[1] = $path;
                 }
