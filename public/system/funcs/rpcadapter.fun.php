@@ -35,7 +35,8 @@ function __createSingleAdapter($data, $adapterClassName = "")
         "role" => \arrayAdapter\roleAdapter::class,
         'records.recordData' => \arrayAdapter\recordAdapter::class,
         'category' => \arrayAdapter\categoryAdapter::class,
-        'records.acceptRecords' => \arrayAdapter\acceptRecordsAdapter::class
+        'records.acceptRecords' => \arrayAdapter\acceptRecordsAdapter::class,
+        'address.addressData' => \arrayAdapter\addressAdapter::class
     ];
 
     if (!isset($data["dataTemplateType"])) {
@@ -447,6 +448,13 @@ function __get_verify()
     return $verify;
 }
 
+function __help_create_verify()
+{
+    return [
+        'verify' => __get_verify()
+    ];
+}
+
 function rpc_createrole_createrole($roleName, $sex)
 {
 
@@ -454,9 +462,7 @@ function rpc_createrole_createrole($roleName, $sex)
         [
             'rolename' => $roleName,
             'sex' => $sex,
-        ], [
-            'verify' => __get_verify()
-        ]);
+        ], __help_create_verify());
 }
 
 function rpc_role_setheadiconurl($url)
@@ -527,4 +533,14 @@ function rpc_records_getAcceptRecords($start = 0, $count = 10)
             'verify' => __get_verify()
         ]
     );
+}
+
+/**
+ * 获取地址栏
+ * @return \arrayAdapter\arrayAdapter[]
+ */
+function rpc_address_getAddresses()
+{
+    return __help__createMultiArrayAdapterRpc('address.getAddresses',
+        [], __help_create_verify());
 }
